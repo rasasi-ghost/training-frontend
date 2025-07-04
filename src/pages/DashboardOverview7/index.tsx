@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { observer } from "mobx-react-lite";
 import Lucide from "@/components/Base/Lucide";
 import { FormSelect, FormInput } from "@/components/Base/Form";
@@ -6,12 +6,10 @@ import Tippy from "@/components/Base/Tippy";
 import Button from "@/components/Base/Button";
 import { CoursesController } from "@/controllers";
 import LoadingIcon from "@/components/Base/LoadingIcon";
-
-import { Menu } from "@/components/Base/Headless";
-
+import { Menu, Dialog } from "@/components/Base/Headless";
 import Table from "@/components/Base/Table";
 import clsx from "clsx";
-import _ from "lodash";
+import CourseDetailsModal from "./CourseDetailsModal";
 
 function CourseCard({
   title,
@@ -79,6 +77,9 @@ function CourseCard({
 }
 
 const StudentDashboard: React.FC = observer(() => {
+  const [selectedCourse, setSelectedCourse] = useState<any>(null);
+  const [showCourseDetails, setShowCourseDetails] = useState(false);
+
   useEffect(() => {
     CoursesController.loadDashboardData();
   }, []);
@@ -88,10 +89,16 @@ const StudentDashboard: React.FC = observer(() => {
   const approvedCourses = CoursesController.approvedCourses;
   const completedCourses = CoursesController.completedCourses;
   const availableCoursesCount = CoursesController.availableCoursesCount;
+  const allEnrolledCourses = [...pendingCourses, ...approvedCourses, ...completedCourses];
 
   // Get a sample grade for completed courses (in a real app, this would come from the API)
   const getRandomGrade = () => {
     return Math.floor(Math.random() * 30) + 70; // Random grade between 70-100
+  };
+
+  const handleViewCourseDetails = (course: any) => {
+    setSelectedCourse(course);
+    setShowCourseDetails(true);
   };
 
   return (
@@ -145,119 +152,9 @@ const StudentDashboard: React.FC = observer(() => {
           />
         </div>
 
-        {/* Course List Section */}
-        {!isLoading && (
-          <div className="mt-8 grid grid-cols-1 gap-5">
-            {/* Pending Courses */}
-            {pendingCourses.length > 0 && (
-              <div className="box box--stacked p-5">
-                <h2 className="text-lg font-medium mb-4">Pending Enrollments</h2>
-                <div className="overflow-auto">
-                  <table className="table table-striped">
-                    <thead>
-                      <tr>
-                        <th>Course Title</th>
-                        <th>Instructor</th>
-                        <th>Status</th>
-                        <th>Enrollment Date</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {pendingCourses.map((course) => {
-                        const enrollment = CoursesController.getEnrollmentForCourse(course.id);
-                        return (
-                          <tr key={course.id}>
-                            <td>{course.title}</td>
-                            <td>{course.instructorName}</td>
-                            <td>
-                              <span className="px-2 py-1 rounded bg-warning/20 text-warning">
-                                Pending
-                              </span>
-                            </td>
-                            <td>{enrollment?.enrollmentDate?.substring(0, 10) || "N/A"}</td>
-                          </tr>
-                        );
-                      })}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            )}
-
-            {/* Approved Courses */}
-            {approvedCourses.length > 0 && (
-              <div className="box box--stacked p-5">
-                <h2 className="text-lg font-medium mb-4">Current Courses</h2>
-                <div className="overflow-auto">
-                  <table className="table table-striped">
-                    <thead>
-                      <tr>
-                        <th>Course Title</th>
-                        <th>Instructor</th>
-                        <th>Start Date</th>
-                        <th>End Date</th>
-                        <th>Credits</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {approvedCourses.map((course) => (
-                        <tr key={course.id}>
-                          <td>{course.title}</td>
-                          <td>{course.instructorName}</td>
-                          <td>{course.startDate?.substring(0, 10) || "N/A"}</td>
-                          <td>{course.endDate?.substring(0, 10) || "N/A"}</td>
-                          <td>{course.credits}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            )}
-
-            {/* Completed Courses */}
-            {completedCourses.length > 0 && (
-              <div className="box box--stacked p-5">
-                <h2 className="text-lg font-medium mb-4">Completed Courses</h2>
-                <div className="overflow-auto">
-                  <table className="table table-striped">
-                    <thead>
-                      <tr>
-                        <th>Course Title</th>
-                        <th>Instructor</th>
-                        <th>Credits</th>
-                        <th>Grade</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {completedCourses.map((course) => {
-                        const grade = getRandomGrade(); // In a real app, this would come from the API
-                        return (
-                          <tr key={course.id}>
-                            <td>{course.title}</td>
-                            <td>{course.instructorName}</td>
-                            <td>{course.credits}</td>
-                            <td>
-                              <span className={`px-2 py-1 rounded ${grade >= 90 ? "bg-success/20 text-success" :
-                                grade >= 70 ? "bg-primary/20 text-primary" :
-                                  "bg-danger/20 text-danger"
-                                }`}>
-                                {grade}%
-                              </span>
-                            </td>
-                          </tr>
-                        );
-                      })}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            )}
-          </div>
-        )}
         <div className="flex items-center h-10 pt-5">
           <div className="text-base font-medium group-[.mode--light]:text-white">
-            My Active Courses
+            My Courses
           </div>
         </div>
         <div className="mt-2 overflow-auto lg:overflow-visible">
@@ -273,9 +170,11 @@ const StudentDashboard: React.FC = observer(() => {
           ) : (
             <Table className="border-spacing-y-[10px] border-separate">
               <Table.Tbody>
-                {approvedCourses.length > 0 ? (
-                  approvedCourses.map((course, index) => {
+                {allEnrolledCourses.length > 0 ? (
+                  allEnrolledCourses.map((course) => {
                     const enrollment = CoursesController.getEnrollmentForCourse(course.id);
+                    const status = enrollment?.statusString || "Unknown";
+                    
                     return (
                       <Table.Tr key={course.id}>
                         <Table.Td className="box shadow-[5px_3px_5px_#00000005] first:border-l last:border-r first:rounded-l-[0.6rem] last:rounded-r-[0.6rem] rounded-l-none rounded-r-none border-x-0 dark:bg-darkmode-600">
@@ -285,7 +184,10 @@ const StudentDashboard: React.FC = observer(() => {
                               className="w-6 h-6 text-theme-1 fill-primary/10 stroke-[0.8]"
                             />
                             <div className="ml-3.5">
-                              <a href="" className="font-medium whitespace-nowrap">
+                              <a href="#" onClick={(e) => {
+                                e.preventDefault();
+                                handleViewCourseDetails(course);
+                              }} className="font-medium whitespace-nowrap">
                                 {course.title}
                               </a>
                               <div className="mt-1 text-xs text-slate-500 whitespace-nowrap">
@@ -312,13 +214,21 @@ const StudentDashboard: React.FC = observer(() => {
                           <div className="mb-1 text-xs text-slate-500 whitespace-nowrap">
                             Status
                           </div>
-                          <div className="flex items-center text-success">
+                          <div className={`flex items-center ${
+                            status === "Approved" ? "text-success" : 
+                            status === "Pending" ? "text-warning" : 
+                            status === "Completed" ? "text-primary" : ""
+                          }`}>
                             <Lucide
-                              icon="CheckCircle"
+                              icon={
+                                status === "Approved" ? "CheckCircle" : 
+                                status === "Pending" ? "Clock" :
+                                status === "Completed" ? "Award" : "Info"
+                              }
                               className="w-3.5 h-3.5 stroke-[1.7]"
                             />
                             <div className="ml-1.5 whitespace-nowrap">
-                              Active
+                              {status}
                             </div>
                           </div>
                         </Table.Td>
@@ -344,7 +254,7 @@ const StudentDashboard: React.FC = observer(() => {
                                 />
                               </Menu.Button>
                               <Menu.Items className="w-40">
-                                <Menu.Item>
+                                <Menu.Item onClick={() => handleViewCourseDetails(course)}>
                                   <Lucide
                                     icon="BookOpen"
                                     className="w-4 h-4 mr-2"
@@ -371,7 +281,7 @@ const StudentDashboard: React.FC = observer(() => {
                     <Table.Td colSpan={6} className="text-center py-4 box shadow-[5px_3px_5px_#00000005] rounded-[0.6rem] dark:bg-darkmode-600">
                       <div className="flex flex-col items-center">
                         <Lucide icon="Search" className="w-16 h-16 text-slate-300 mb-2" />
-                        <p className="text-slate-500">No active courses found</p>
+                        <p className="text-slate-500">No courses found</p>
                         <Button variant="primary" className="mt-4">
                           Browse Available Courses
                         </Button>
@@ -383,6 +293,15 @@ const StudentDashboard: React.FC = observer(() => {
             </Table>
           )}
         </div>
+
+        {/* Course Details Modal */}
+        {selectedCourse && (
+          <CourseDetailsModal
+            open={showCourseDetails}
+            onClose={() => setShowCourseDetails(false)}
+            course={selectedCourse}
+          />
+        )}
       </div>
     </div>
   );

@@ -1,56 +1,45 @@
-import MyCoursesStore from "../state/MyCoursesStore";
-import { Course } from "../services/CourseService";
+import { makeAutoObservable } from "mobx";
+import myCoursesStore, { MyCoursesStore } from "../state/MyCoursesStore";
+import { Course, Enrollment } from "../services/CourseService";
 
 class CoursesController {
-  private coursesStore = MyCoursesStore;
-
-  async loadDashboardData() {
-    return this.coursesStore.loadAllCourseData();
+  constructor(private store: MyCoursesStore) {
+    makeAutoObservable(this);
   }
 
-  async enrollInCourse(courseId: string) {
-    return this.coursesStore.enrollInCourse(courseId);
+  get isLoading(): boolean {
+    return this.store.loadingAvailable || 
+           this.store.loadingEnrollments || 
+           this.store.loadingEnrolled;
   }
 
-  get pendingCourses() {
-    return this.coursesStore.pendingCourses;
+  get pendingCourses(): Course[] {
+    return this.store.pendingCourses;
   }
 
-  get approvedCourses() {
-    return this.coursesStore.approvedCourses;
+  get approvedCourses(): Course[] {
+    return this.store.approvedCourses;
   }
 
-  get completedCourses() {
-    return this.coursesStore.completedCourses;
+  get completedCourses(): Course[] {
+    return this.store.completedCourses;
   }
 
-  get availableCoursesCount() {
-    return this.coursesStore.availableCoursesCount;
+  get availableCoursesCount(): number {
+    return this.store.availableCoursesCount;
   }
 
-  get pendingEnrollments() {
-    return this.coursesStore.pendingEnrollments;
+  getEnrollmentForCourse(courseId: string): Enrollment | undefined {
+    return this.store.enrollments.find(e => e.courseId === courseId);
   }
 
-  get approvedEnrollments() {
-    return this.coursesStore.approvedEnrollments;
+  async loadDashboardData(): Promise<void> {
+    await this.store.loadAllCourseData();
   }
 
-  get completedEnrollments() {
-    return this.coursesStore.completedEnrollments;
-  }
-
-  getEnrollmentForCourse(courseId: string) {
-    return this.coursesStore.enrollments.find(e => e.courseId === courseId);
-  }
-
-  get isLoading() {
-    return (
-      this.coursesStore.loadingAvailable || 
-      this.coursesStore.loadingEnrollments || 
-      this.coursesStore.loadingEnrolled
-    );
+  async enrollInCourse(courseId: string): Promise<boolean> {
+    return await this.store.enrollInCourse(courseId);
   }
 }
 
-export default new CoursesController();
+export default new CoursesController(myCoursesStore);
