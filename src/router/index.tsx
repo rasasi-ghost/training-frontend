@@ -63,6 +63,7 @@ import LandingPage from "../pages/LandingPage";
 import Layout from "../themes";
 import ProtectedRoute from "../components/ProtectedRoute";
 import { UserRole } from "../types/user";
+import ProfileOverviewStudent from "@/pages/ProfileOverviewStudent";
 
 function Router() {
   const routes = [
@@ -185,12 +186,12 @@ function Router() {
               ],
             },
             {
-              path: "profile-overview",
+              path: "profile-overview-student",
               element: <ProtectedRoute />,
               children: [
                 {
                   path: "",
-                  element: <ProfileOverview />,
+                  element: <ProfileOverviewStudent />,
                 },
               ],
             },

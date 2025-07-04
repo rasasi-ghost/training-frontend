@@ -63,9 +63,10 @@ const CourseDetailsModal: React.FC<CourseDetailsModalProps> = ({
                   <span className={`ml-2 px-2 py-1 rounded text-xs font-medium ${
                     enrollment?.statusString === "Approved" ? "bg-success/20 text-success" : 
                     enrollment?.statusString === "Pending" ? "bg-warning/20 text-warning" : 
-                    enrollment?.statusString === "Completed" ? "bg-primary/20 text-primary" : ""
+                    enrollment?.statusString === "Completed" ? "bg-primary/20 text-primary" : 
+                    "bg-slate-200 text-slate-600"
                   }`}>
-                    {enrollment?.statusString || "Unknown"}
+                    {enrollment?.statusString || "Not Enrolled"}
                   </span>
                 </div>
               </div>
@@ -163,13 +164,27 @@ const CourseDetailsModal: React.FC<CourseDetailsModalProps> = ({
           >
             Close
           </Button>
-          {enrollment?.statusString !== "Completed" && (
+          {enrollment ? (
+            enrollment.statusString !== "Completed" && (
+              <Button
+                variant="primary"
+                type="button"
+                className="w-auto"
+              >
+                {enrollment.statusString === "Pending" ? "View Pending Status" : "Access Course"}
+              </Button>
+            )
+          ) : (
             <Button
               variant="primary"
               type="button"
               className="w-auto"
+              onClick={() => {
+                onClose();
+                // Trigger enrollment flow - this would need to be implemented in the parent component
+              }}
             >
-              {enrollment?.statusString === "Pending" ? "View Pending Status" : "Access Course"}
+              Enroll Now
             </Button>
           )}
         </Dialog.Footer>

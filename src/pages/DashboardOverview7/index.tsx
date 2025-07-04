@@ -11,7 +11,6 @@ import Table from "@/components/Base/Table";
 import clsx from "clsx";
 import CourseDetailsModal from "./CourseDetailsModal";
 
-
 import _ from "lodash";
 import users from "@/fakers/users";
 
@@ -83,6 +82,10 @@ function CourseCard({
 const StudentDashboard: React.FC = observer(() => {
   const [selectedCourse, setSelectedCourse] = useState<any>(null);
   const [showCourseDetails, setShowCourseDetails] = useState(false);
+  const [showEnrollConfirmation, setShowEnrollConfirmation] = useState(false);
+  const [enrollingCourseId, setEnrollingCourseId] = useState<string | null>(null);
+  const [isEnrolling, setIsEnrolling] = useState(false);
+  const [enrollmentSuccess, setEnrollmentSuccess] = useState(false);
 
   useEffect(() => {
     CoursesController.loadDashboardData();
@@ -95,7 +98,6 @@ const StudentDashboard: React.FC = observer(() => {
   const availableCoursesCount = CoursesController.availableCoursesCount;
   const allEnrolledCourses = [...pendingCourses, ...approvedCourses, ...completedCourses];
 
-  // Get a sample grade for completed courses (in a real app, this would come from the API)
   const getRandomGrade = () => {
     return Math.floor(Math.random() * 30) + 70; // Random grade between 70-100
   };
@@ -103,6 +105,32 @@ const StudentDashboard: React.FC = observer(() => {
   const handleViewCourseDetails = (course: any) => {
     setSelectedCourse(course);
     setShowCourseDetails(true);
+  };
+
+  const handleEnrollCourse = (courseId: string) => {
+    setEnrollingCourseId(courseId);
+    setShowEnrollConfirmation(true);
+  };
+
+  const submitEnrollment = async () => {
+    if (!enrollingCourseId) return;
+
+    setIsEnrolling(true);
+    try {
+      const success = await CoursesController.enrollInCourse(enrollingCourseId);
+      if (success) {
+        setEnrollmentSuccess(true);
+        setTimeout(() => {
+          setShowEnrollConfirmation(false);
+          setEnrollmentSuccess(false);
+          setEnrollingCourseId(null);
+        }, 3000);
+      }
+    } catch (error) {
+      console.error("Enrollment failed", error);
+    } finally {
+      setIsEnrolling(false);
+    }
   };
 
   return (
@@ -114,7 +142,6 @@ const StudentDashboard: React.FC = observer(() => {
           </div>
         </div>
         <div className="grid grid-cols-12 gap-5 mt-3.5">
-          {/* Pending Enrollments */}
           <CourseCard
             title="Pending"
             subtitle="Awaiting Approval"
@@ -123,8 +150,6 @@ const StudentDashboard: React.FC = observer(() => {
             status="Pending"
             loading={isLoading}
           />
-
-          {/* Approved Courses */}
           <CourseCard
             title="Approved"
             subtitle="Current Courses"
@@ -133,8 +158,6 @@ const StudentDashboard: React.FC = observer(() => {
             status="Approved"
             loading={isLoading}
           />
-
-          {/* Completed Courses */}
           <CourseCard
             title="Completed"
             subtitle="Finished Courses"
@@ -144,8 +167,6 @@ const StudentDashboard: React.FC = observer(() => {
             loading={isLoading}
             grade={completedCourses.length > 0 ? getRandomGrade() : null}
           />
-
-          {/* Available Courses */}
           <CourseCard
             title="Available"
             subtitle="Courses to Enroll"
@@ -163,7 +184,6 @@ const StudentDashboard: React.FC = observer(() => {
         </div>
         <div className="mt-2 overflow-auto lg:overflow-visible">
           {isLoading ? (
-            // Shimmer effect for loading state
             <div className="border-spacing-y-[10px] border-separate">
               {[...Array(5)].map((_, index) => (
                 <div key={index} className="flex w-full mb-3">
@@ -178,7 +198,7 @@ const StudentDashboard: React.FC = observer(() => {
                   allEnrolledCourses.map((course) => {
                     const enrollment = CoursesController.getEnrollmentForCourse(course.id);
                     const status = enrollment?.statusString || "Unknown";
-                    
+
                     return (
                       <Table.Tr key={course.id}>
                         <Table.Td className="box shadow-[5px_3px_5px_#00000005] first:border-l last:border-r first:rounded-l-[0.6rem] last:rounded-r-[0.6rem] rounded-l-none rounded-r-none border-x-0 dark:bg-darkmode-600">
@@ -298,190 +318,115 @@ const StudentDashboard: React.FC = observer(() => {
           )}
         </div>
 
-        <div className="grid grid-cols-12 gap-y-10 gap-x-6 mt-3.5">
-                {_.take(users.fakeUsers(), 9).map((faker, fakerKey) => (
-                  <div
-                    className="flex flex-col col-span-12 md:col-span-6 xl:col-span-4 box box--stacked"
-                    key={fakerKey}
-                  >
-                    <Menu className="absolute top-0 right-0 mt-5 mr-5">
-                      <Menu.Button className="w-5 h-5 text-slate-500">
-                        <Lucide
-                          icon="MoreVertical"
-                          className="w-5 h-5 stroke-slate-400/70 fill-slate-400/70"
-                        />
-                      </Menu.Button>
-                      <Menu.Items className="w-40">
-                        <Menu.Item>
-                          <Lucide icon="Copy" className="w-4 h-4 mr-2" /> Copy
-                          Link
-                        </Menu.Item>
-                        <Menu.Item>
-                          <Lucide icon="Trash" className="w-4 h-4 mr-2" />
-                          Delete
-                        </Menu.Item>
-                      </Menu.Items>
-                    </Menu>
-                    <div className="flex flex-col items-center px-5 pb-10 mt-10">
-                      <div className="w-[72px] h-[72px] overflow-hidden rounded-full image-fit border-[3px] border-slate-200/70">
-                        <img
-                          alt="Tailwise - Admin Dashboard Template"
-                          src={faker.photo}
-                        />
-                      </div>
-                      <div className="mt-3 font-medium text-primary text-[0.94rem]">
-                        {faker.name}
-                      </div>
-                      <div className="flex items-center justify-center gap-3 mt-2">
-                        <div className="flex items-center text-slate-500">
-                          <Lucide
-                            icon="Hotel"
-                            className="w-3.5 h-3.5 mr-1.5 stroke-[1.3]"
-                          />
-                          {faker.location}
-                        </div>
-                        <div className="flex items-center text-slate-500">
-                          <Lucide
-                            icon="Calendar"
-                            className="w-3.5 h-3.5 mr-1.5 stroke-[1.3]"
-                          />
-                          {faker.joinedDate}
-                        </div>
-                      </div>
-                      <div className="flex flex-wrap items-center justify-center gap-2 mt-5 sm:flex-row">
-                        <span className="flex items-center text-xs font-medium rounded-md text-primary bg-primary/10 border border-primary/10 px-2 py-0.5">
-                          <span className="-mt-px truncate">
-                            {faker.department}
-                          </span>
-                        </span>
-                        <span className="flex items-center text-xs font-medium rounded-md text-primary bg-primary/10 border border-primary/10 px-2 py-0.5">
-                          <span className="-mt-px truncate">
-                            {faker.position}
-                          </span>
-                        </span>
-                      </div>
-                    </div>
-                    <div className="flex items-center px-5 py-4 border-t border-slate-200/80">
-                      <div className="text-slate-500">
-                        {_.random(20, 100)}+ Connections
-                      </div>
-                      {_.random(0, 1) ? (
-                        <Button
-                          variant="outline-primary"
-                          className="px-4 ml-auto border-primary/50"
-                        >
-                          <Lucide
-                            icon="UserPlus"
-                            className="stroke-[1.3] w-4 h-4 -ml-0.5 mr-2"
-                          />
-                          Connect
-                        </Button>
-                      ) : (
-                        <Button variant="primary" className="px-4 ml-auto">
-                          <Lucide
-                            icon="Check"
-                            className="stroke-[1.3] w-4 h-4 -ml-0.5 mr-2"
-                          />
-                          Connected
-                        </Button>
-                      )}
-                    </div>
-                  </div>
-                ))}
+        <div className="flex items-center h-10 pt-5 mt-5">
+          <div className="text-base font-medium group-[.mode--light]:text-white">
+            Available Courses
+          </div>
+        </div>
 
-              </div> <div className="grid grid-cols-12 gap-y-10 gap-x-6 mt-3.5">
-                {_.take(users.fakeUsers(), 9).map((faker, fakerKey) => (
-                  <div
-                    className="flex flex-col col-span-12 md:col-span-6 xl:col-span-4 box box--stacked"
-                    key={fakerKey}
-                  >
-                    <Menu className="absolute top-0 right-0 mt-5 mr-5">
-                      <Menu.Button className="w-5 h-5 text-slate-500">
-                        <Lucide
-                          icon="MoreVertical"
-                          className="w-5 h-5 stroke-slate-400/70 fill-slate-400/70"
-                        />
-                      </Menu.Button>
-                      <Menu.Items className="w-40">
-                        <Menu.Item>
-                          <Lucide icon="Copy" className="w-4 h-4 mr-2" /> Copy
-                          Link
-                        </Menu.Item>
-                        <Menu.Item>
-                          <Lucide icon="Trash" className="w-4 h-4 mr-2" />
-                          Delete
-                        </Menu.Item>
-                      </Menu.Items>
-                    </Menu>
-                    <div className="flex flex-col items-center px-5 pb-10 mt-10">
-                      <div className="w-[72px] h-[72px] overflow-hidden rounded-full image-fit border-[3px] border-slate-200/70">
-                        <img
-                          alt="Tailwise - Admin Dashboard Template"
-                          src={faker.photo}
-                        />
-                      </div>
-                      <div className="mt-3 font-medium text-primary text-[0.94rem]">
-                        {faker.name}
-                      </div>
-                      <div className="flex items-center justify-center gap-3 mt-2">
-                        <div className="flex items-center text-slate-500">
-                          <Lucide
-                            icon="Hotel"
-                            className="w-3.5 h-3.5 mr-1.5 stroke-[1.3]"
-                          />
-                          {faker.location}
-                        </div>
-                        <div className="flex items-center text-slate-500">
-                          <Lucide
-                            icon="Calendar"
-                            className="w-3.5 h-3.5 mr-1.5 stroke-[1.3]"
-                          />
-                          {faker.joinedDate}
-                        </div>
-                      </div>
-                      <div className="flex flex-wrap items-center justify-center gap-2 mt-5 sm:flex-row">
-                        <span className="flex items-center text-xs font-medium rounded-md text-primary bg-primary/10 border border-primary/10 px-2 py-0.5">
-                          <span className="-mt-px truncate">
-                            {faker.department}
-                          </span>
-                        </span>
-                        <span className="flex items-center text-xs font-medium rounded-md text-primary bg-primary/10 border border-primary/10 px-2 py-0.5">
-                          <span className="-mt-px truncate">
-                            {faker.position}
-                          </span>
-                        </span>
-                      </div>
-                    </div>
-                    <div className="flex items-center px-5 py-4 border-t border-slate-200/80">
-                      <div className="text-slate-500">
-                        {_.random(20, 100)}+ Connections
-                      </div>
-                      {_.random(0, 1) ? (
-                        <Button
-                          variant="outline-primary"
-                          className="px-4 ml-auto border-primary/50"
-                        >
-                          <Lucide
-                            icon="UserPlus"
-                            className="stroke-[1.3] w-4 h-4 -ml-0.5 mr-2"
-                          />
-                          Connect
-                        </Button>
-                      ) : (
-                        <Button variant="primary" className="px-4 ml-auto">
-                          <Lucide
-                            icon="Check"
-                            className="stroke-[1.3] w-4 h-4 -ml-0.5 mr-2"
-                          />
-                          Connected
-                        </Button>
-                      )}
-                    </div>
-                  </div>
-                ))}
+        <div id="mynewcomponent" className="grid grid-cols-12 gap-y-10 gap-x-6 mt-3.5">
+          {isLoading ? (
+            [...Array(6)].map((_, index) => (
+              <div key={index} className="flex flex-col col-span-12 md:col-span-6 xl:col-span-4 box box--stacked animate-pulse">
+                <div className="h-40 bg-slate-200 dark:bg-darkmode-400 rounded-t-[0.6rem]"></div>
+                <div className="p-5">
+                  <div className="h-6 bg-slate-200 dark:bg-darkmode-400 rounded mb-3 w-3/4"></div>
+                  <div className="h-4 bg-slate-200 dark:bg-darkmode-400 rounded mb-2 w-full"></div>
+                  <div className="h-4 bg-slate-200 dark:bg-darkmode-400 rounded mb-4 w-2/3"></div>
+                  <div className="h-8 bg-slate-200 dark:bg-darkmode-400 rounded w-1/3 ml-auto"></div>
+                </div>
               </div>
+            ))
+          ) : (
+            <>
+              {CoursesController.availableCourses.map((course) => {
+                const isEnrolled = allEnrolledCourses.some(c => c.id === course.id);
+                return (
+                  <div
+                    key={course.id}
+                    className="flex flex-col col-span-12 md:col-span-6 xl:col-span-4 box box--stacked"
+                  >
+                    <div className="relative h-40 bg-slate-200 dark:bg-darkmode-600 rounded-t-[0.6rem]">
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <Lucide
+                          icon="BookOpen"
+                          className="w-16 h-16 text-primary/30"
+                        />
+                      </div>
+                      {isEnrolled && (
+                        <div className="absolute top-3 right-3">
+                          <span className="px-2 py-1 text-xs font-medium rounded-md bg-success/20 text-success">
+                            Enrolled
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                    <div className="flex flex-col p-5">
+                      <div className="text-lg font-medium text-primary">
+                        {course.title}
+                      </div>
+                      <div className="flex items-center mt-2">
+                        <Lucide
+                          icon="User"
+                          className="w-4 h-4 mr-1.5 text-slate-500"
+                        />
+                        <div className="text-slate-600">
+                          {course.instructorName}
+                        </div>
+                      </div>
+                      <div className="flex items-center mt-1">
+                        <Lucide
+                          icon="Calendar"
+                          className="w-4 h-4 mr-1.5 text-slate-500"
+                        />
+                        <div className="text-slate-600">
+                          {course.startDate?.substring(0, 10) || "N/A"}
+                        </div>
+                      </div>
+                      <div className="flex items-center mt-1 mb-4">
+                        <Lucide
+                          icon="Award"
+                          className="w-4 h-4 mr-1.5 text-slate-500"
+                        />
+                        <div className="text-slate-600">
+                          {course.credits} Credits
+                        </div>
+                      </div>
+                      {isEnrolled ? (
+                        <Button
+                          variant="primary"
+                          className="w-full mt-auto"
+                          onClick={() => handleViewCourseDetails(course)}
+                        >
+                          View Course
+                        </Button>
+                      ) : (
+                        <Button
+                          variant="outline-primary"
+                          className="w-full mt-auto"
+                          onClick={() => handleEnrollCourse(course.id)}
+                        >
+                          Enroll in Course
+                        </Button>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
 
-        {/* Course Details Modal */}
+              {CoursesController.availableCourses.length === 0 && !isLoading && (
+                <div className="col-span-12 flex flex-col items-center justify-center p-10 box box--stacked">
+                  <Lucide
+                    icon="Search"
+                    className="w-16 h-16 text-slate-300 mb-2"
+                  />
+                  <p className="text-slate-500 text-lg">No available courses found</p>
+                </div>
+              )}
+            </>
+          )}
+        </div>
+
         {selectedCourse && (
           <CourseDetailsModal
             open={showCourseDetails}
@@ -489,6 +434,71 @@ const StudentDashboard: React.FC = observer(() => {
             course={selectedCourse}
           />
         )}
+
+        <Dialog
+          open={showEnrollConfirmation}
+          onClose={() => {
+            if (!isEnrolling && !enrollmentSuccess) {
+              setShowEnrollConfirmation(false);
+              setEnrollingCourseId(null);
+            }
+          }}
+        >
+          <Dialog.Panel>
+            {enrollmentSuccess ? (
+              <div className="p-5 text-center">
+                <Lucide
+                  icon="CheckCircle"
+                  className="w-16 h-16 mx-auto mt-3 text-success"
+                />
+                <div className="mt-5 text-2xl">Enrollment Successful!</div>
+                <div className="mt-2 text-slate-500">
+                  Your enrollment request has been submitted and is pending approval.
+                </div>
+              </div>
+            ) : (
+              <>
+                <div className="p-5 text-center">
+                  <Lucide
+                    icon="HelpCircle"
+                    className="w-16 h-16 mx-auto mt-3 text-primary"
+                  />
+                  <div className="mt-5 text-2xl">Confirm Enrollment</div>
+                  <div className="mt-2 text-slate-500">
+                    Are you sure you want to enroll in this course? This action will submit an enrollment request that requires approval.
+                  </div>
+                </div>
+                <div className="px-5 pb-8 text-center">
+                  <Button
+                    type="button"
+                    variant="outline-secondary"
+                    onClick={() => {
+                      setShowEnrollConfirmation(false);
+                      setEnrollingCourseId(null);
+                    }}
+                    className="w-24 mr-2"
+                    disabled={isEnrolling}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="primary"
+                    onClick={submitEnrollment}
+                    className="w-24"
+                    disabled={isEnrolling}
+                  >
+                    {isEnrolling ? (
+                      <LoadingIcon icon="oval" className="w-5 h-5" />
+                    ) : (
+                      "Enroll"
+                    )}
+                  </Button>
+                </div>
+              </>
+            )}
+          </Dialog.Panel>
+        </Dialog>
       </div>
     </div>
   );

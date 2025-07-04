@@ -25,8 +25,16 @@ class CoursesController {
     return this.store.completedCourses;
   }
 
+  get availableCourses(): Course[] {
+    return this.store.availableCourses;
+  }
+
   get availableCoursesCount(): number {
     return this.store.availableCoursesCount;
+  }
+
+  isCourseEnrolled(courseId: string): boolean {
+    return this.store.enrollments.some(e => e.courseId === courseId);
   }
 
   getEnrollmentForCourse(courseId: string): Enrollment | undefined {

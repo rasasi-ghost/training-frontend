@@ -111,9 +111,9 @@ const teacherMenu: Array<Menu | string> = [
 const studentMenu: Array<Menu | string> = [
   "Student Dashboard",
   {
-    icon: "MousePointerSquare",
-    pathname: "/dashboard-overview-6",
-    title: "Cafe",
+    icon: "Home",
+    pathname: "/dashboard-overview-7",
+    title: "Home",
   },
   "APPS",
   {
@@ -124,8 +124,8 @@ const studentMenu: Array<Menu | string> = [
   "PERSONAL DASHBOARD",
   {
     icon: "CalendarRange",
-    pathname: "/profile-overview?page=events",
-    title: "Events",
+    pathname: "/profile-overview-student",
+    title: "Profile",
   },
   {
     icon: "Medal",
