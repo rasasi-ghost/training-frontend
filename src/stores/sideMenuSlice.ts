@@ -136,23 +136,23 @@ const studentMenu: Array<Menu | string> = [
 ];
 
 const roleMenuMap = {
-  admin: adminMenu,
-  teacher: teacherMenu,
-  student: studentMenu,
+  Admin: adminMenu,
+  Teacher: teacherMenu,
+  Student: studentMenu,
 };
 
 // Initialize from localStorage or default to admin
-const getUserRole = (): "admin" | "teacher" | "student" => {
+const getUserRole = (): "Admin" | "Teacher" | "Student" => {
   const storedRole = localStorage.getItem("role");
-  if (storedRole === "admin" || storedRole === "teacher" || storedRole === "student") {
+  if (storedRole === "Admin" || storedRole === "Teacher" || storedRole === "Student") {
     return storedRole;
   }
-  return "admin"; // Default role
+  return "Admin"; // Default role
 };
 
 const initialState: SideMenuState = {
 
-  menu: roleMenuMap[getUserRole()] || roleMenuMap.admin,
+  menu: roleMenuMap[getUserRole()] || roleMenuMap.Admin,
 
 };
 
@@ -160,7 +160,7 @@ export const sideMenuSlice = createSlice({
   name: "sideMenu",
   initialState,
   reducers: {
-    setRole: (state, action: PayloadAction<"admin" | "teacher" | "student">) => {
+    setRole: (state, action: PayloadAction<"Admin" | "Teacher" | "Student">) => {
       state.menu = roleMenuMap[action.payload];
       localStorage.setItem("userRole", action.payload);
     },

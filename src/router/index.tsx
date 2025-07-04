@@ -61,240 +61,272 @@ import ImageZoom from "../pages/ImageZoom";
 import LandingPage from "../pages/LandingPage";
 
 import Layout from "../themes";
+import ProtectedRoute from "../components/ProtectedRoute";
+import { UserRole } from "../types/user";
 
 function Router() {
   const routes = [
     {
       path: "/",
-      element: <Layout />,
+      element: <ProtectedRoute />,
       children: [
         {
           path: "/",
-          element: <DashboardOverview1 />,
-        },
-        {
-          path: "dashboard-overview-2",
-          element: <DashboardOverview2 />,
-        },
-        {
-          path: "dashboard-overview-3",
-          element: <DashboardOverview3 />,
-        },
-        {
-          path: "dashboard-overview-4",
-          element: <DashboardOverview4 />,
-        },
-        {
-          path: "dashboard-overview-5",
-          element: <DashboardOverview5 />,
-        },
-        {
-          path: "dashboard-overview-6",
-          element: <DashboardOverview6 />,
-        },
-        {
-          path: "dashboard-overview-7",
-          element: <DashboardOverview7 />,
-        },
-        {
-          path: "dashboard-overview-8",
-          element: <DashboardOverview8 />,
-        },
-        {
-          path: "users",
-          element: <Users />,
-        },
-        {
-          path: "departments",
-          element: <Departments />,
-        },
-        {
-          path: "add-user",
-          element: <AddUser />,
-        },
-        {
-          path: "profile-overview",
-          element: <ProfileOverview />,
-        },
-        {
-          path: "settings",
-          element: <Settings />,
-        },
-        {
-          path: "billing",
-          element: <Billing />,
-        },
-        {
-          path: "invoice",
-          element: <Invoice />,
-        },
-        {
-          path: "categories",
-          element: <Categories />,
-        },
-        {
-          path: "add-product",
-          element: <AddProduct />,
-        },
-        {
-          path: "product-list",
-          element: <ProductList />,
-        },
-        {
-          path: "product-grid",
-          element: <ProductGrid />,
-        },
-        {
-          path: "transaction-list",
-          element: <TransactionList />,
-        },
-        {
-          path: "transaction-detail",
-          element: <TransactionDetail />,
-        },
-        {
-          path: "seller-list",
-          element: <SellerList />,
-        },
-        {
-          path: "seller-detail",
-          element: <SellerDetail />,
-        },
-        {
-          path: "reviews",
-          element: <Reviews />,
-        },
-        {
-          path: "inbox",
-          element: <Inbox />,
-        },
-        {
-          path: "file-manager-list",
-          element: <FileManagerList />,
-        },
-        {
-          path: "file-manager-grid",
-          element: <FileManagerGrid />,
-        },
-        {
-          path: "chat",
-          element: <Chat />,
-        },
-        {
-          path: "calendar",
-          element: <Calendar />,
-        },
-        {
-          path: "point-of-sale",
-          element: <PointOfSale />,
-        },
-        {
-          path: "creative",
-          element: <Creative />,
-        },
-        {
-          path: "dynamic",
-          element: <Dynamic />,
-        },
-        {
-          path: "interactive",
-          element: <Interactive />,
-        },
-        {
-          path: "regular-table",
-          element: <RegularTable />,
-        },
-        {
-          path: "tabulator",
-          element: <Tabulator />,
-        },
-        {
-          path: "modal",
-          element: <Modal />,
-        },
-        {
-          path: "slideover",
-          element: <Slideover />,
-        },
-        {
-          path: "notification",
-          element: <Notification />,
-        },
-        {
-          path: "tab",
-          element: <Tab />,
-        },
-        {
-          path: "accordion",
-          element: <Accordion />,
-        },
-        {
-          path: "button",
-          element: <Button />,
-        },
-        {
-          path: "alert",
-          element: <Alert />,
-        },
-        {
-          path: "progress-bar",
-          element: <ProgressBar />,
-        },
-        {
-          path: "tooltip",
-          element: <Tooltip />,
-        },
-        {
-          path: "dropdown",
-          element: <Dropdown />,
-        },
-        {
-          path: "typography",
-          element: <Typography />,
-        },
-        {
-          path: "icon",
-          element: <Icon />,
-        },
-        {
-          path: "loading-icon",
-          element: <LoadingIcon />,
-        },
-        {
-          path: "regular-form",
-          element: <RegularForm />,
-        },
-        {
-          path: "datepicker",
-          element: <Datepicker />,
-        },
-        {
-          path: "tom-select",
-          element: <TomSelect />,
-        },
-        {
-          path: "file-upload",
-          element: <FileUpload />,
-        },
-        {
-          path: "wysiwyg-editor",
-          element: <WysiwygEditor />,
-        },
-        {
-          path: "validation",
-          element: <Validation />,
-        },
-        {
-          path: "chart",
-          element: <Chart />,
-        },
-        {
-          path: "slider",
-          element: <Slider />,
-        },
-        {
-          path: "image-zoom",
-          element: <ImageZoom />,
+          element: <Layout />,
+          children: [
+            {
+              path: "/",
+              element: <ProtectedRoute allowedRoles={[UserRole.Admin]} />,
+              children: [
+                {
+                  path: "/",
+                  element: <DashboardOverview1 />,
+                },
+              ],
+            },
+            {
+              path: "dashboard-overview-2",
+              element: <ProtectedRoute allowedRoles={[UserRole.Teacher]} />,
+              children: [
+                {
+                  path: "",
+                  element: <DashboardOverview2 />,
+                },
+              ],
+            },
+            {
+              path: "dashboard-overview-3",
+              element: <ProtectedRoute allowedRoles={[UserRole.Student]} />,
+              children: [
+                {
+                  path: "",
+                  element: <DashboardOverview3 />,
+                },
+              ],
+            },
+            {
+              path: "dashboard-overview-4",
+              element: <DashboardOverview4 />,
+            },
+            {
+              path: "dashboard-overview-5",
+              element: <DashboardOverview5 />,
+            },
+            {
+              path: "dashboard-overview-6",
+              element: <DashboardOverview6 />,
+            },
+            {
+              path: "dashboard-overview-7",
+              element: <DashboardOverview7 />,
+            },
+            {
+              path: "dashboard-overview-8",
+              element: <DashboardOverview8 />,
+            },
+            {
+              path: "users",
+              element: <ProtectedRoute allowedRoles={[UserRole.Admin]} />,
+              children: [
+                {
+                  path: "",
+                  element: <Users />,
+                },
+              ],
+            },
+            {
+              path: "departments",
+              element: <Departments />,
+            },
+            {
+              path: "add-user",
+              element: <AddUser />,
+            },
+            {
+              path: "profile-overview",
+              element: <ProfileOverview />,
+            },
+            {
+              path: "settings",
+              element: <Settings />,
+            },
+            {
+              path: "billing",
+              element: <Billing />,
+            },
+            {
+              path: "invoice",
+              element: <Invoice />,
+            },
+            {
+              path: "categories",
+              element: <Categories />,
+            },
+            {
+              path: "add-product",
+              element: <AddProduct />,
+            },
+            {
+              path: "product-list",
+              element: <ProductList />,
+            },
+            {
+              path: "product-grid",
+              element: <ProductGrid />,
+            },
+            {
+              path: "transaction-list",
+              element: <TransactionList />,
+            },
+            {
+              path: "transaction-detail",
+              element: <TransactionDetail />,
+            },
+            {
+              path: "seller-list",
+              element: <SellerList />,
+            },
+            {
+              path: "seller-detail",
+              element: <SellerDetail />,
+            },
+            {
+              path: "reviews",
+              element: <Reviews />,
+            },
+            {
+              path: "inbox",
+              element: <Inbox />,
+            },
+            {
+              path: "file-manager-list",
+              element: <FileManagerList />,
+            },
+            {
+              path: "file-manager-grid",
+              element: <FileManagerGrid />,
+            },
+            {
+              path: "chat",
+              element: <Chat />,
+            },
+            {
+              path: "calendar",
+              element: <Calendar />,
+            },
+            {
+              path: "point-of-sale",
+              element: <PointOfSale />,
+            },
+            {
+              path: "creative",
+              element: <Creative />,
+            },
+            {
+              path: "dynamic",
+              element: <Dynamic />,
+            },
+            {
+              path: "interactive",
+              element: <Interactive />,
+            },
+            {
+              path: "regular-table",
+              element: <RegularTable />,
+            },
+            {
+              path: "tabulator",
+              element: <Tabulator />,
+            },
+            {
+              path: "modal",
+              element: <Modal />,
+            },
+            {
+              path: "slideover",
+              element: <Slideover />,
+            },
+            {
+              path: "notification",
+              element: <Notification />,
+            },
+            {
+              path: "tab",
+              element: <Tab />,
+            },
+            {
+              path: "accordion",
+              element: <Accordion />,
+            },
+            {
+              path: "button",
+              element: <Button />,
+            },
+            {
+              path: "alert",
+              element: <Alert />,
+            },
+            {
+              path: "progress-bar",
+              element: <ProgressBar />,
+            },
+            {
+              path: "tooltip",
+              element: <Tooltip />,
+            },
+            {
+              path: "dropdown",
+              element: <Dropdown />,
+            },
+            {
+              path: "typography",
+              element: <Typography />,
+            },
+            {
+              path: "icon",
+              element: <Icon />,
+            },
+            {
+              path: "loading-icon",
+              element: <LoadingIcon />,
+            },
+            {
+              path: "regular-form",
+              element: <RegularForm />,
+            },
+            {
+              path: "datepicker",
+              element: <Datepicker />,
+            },
+            {
+              path: "tom-select",
+              element: <TomSelect />,
+            },
+            {
+              path: "file-upload",
+              element: <FileUpload />,
+            },
+            {
+              path: "wysiwyg-editor",
+              element: <WysiwygEditor />,
+            },
+            {
+              path: "validation",
+              element: <Validation />,
+            },
+            {
+              path: "chart",
+              element: <Chart />,
+            },
+            {
+              path: "slider",
+              element: <Slider />,
+            },
+            {
+              path: "image-zoom",
+              element: <ImageZoom />,
+            },
+          ],
         },
       ],
     },
