@@ -22,7 +22,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = observer(({ allowedRoles }
 
   if (!isAuthenticated || !currentUser) {
     // Redirect to login if not authenticated
-    alert("You are not authenticated. Please log in.");
+    // alert("You are not authenticated. Please log in.");
     return <Navigate to="/login" replace />;
   }
 

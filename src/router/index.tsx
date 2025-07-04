@@ -100,7 +100,7 @@ function Router() {
               children: [
                 {
                   path: "",
-                  element: <DashboardOverview3 />,
+                  element: <DashboardOverview7 />,
                 },
               ],
             },

@@ -1,7 +1,9 @@
+import MyCoursesStore from './MyCoursesStore';
 import UserStore from './UserStore';
 
 class RootStore {
   userStore = UserStore;
+  myCoursesStore = MyCoursesStore;
   
   // Add other stores as needed
   // courseStore = new CourseStore();
