@@ -11,6 +11,10 @@ import Table from "@/components/Base/Table";
 import clsx from "clsx";
 import CourseDetailsModal from "./CourseDetailsModal";
 
+
+import _ from "lodash";
+import users from "@/fakers/users";
+
 function CourseCard({
   title,
   subtitle,
@@ -293,6 +297,189 @@ const StudentDashboard: React.FC = observer(() => {
             </Table>
           )}
         </div>
+
+        <div className="grid grid-cols-12 gap-y-10 gap-x-6 mt-3.5">
+                {_.take(users.fakeUsers(), 9).map((faker, fakerKey) => (
+                  <div
+                    className="flex flex-col col-span-12 md:col-span-6 xl:col-span-4 box box--stacked"
+                    key={fakerKey}
+                  >
+                    <Menu className="absolute top-0 right-0 mt-5 mr-5">
+                      <Menu.Button className="w-5 h-5 text-slate-500">
+                        <Lucide
+                          icon="MoreVertical"
+                          className="w-5 h-5 stroke-slate-400/70 fill-slate-400/70"
+                        />
+                      </Menu.Button>
+                      <Menu.Items className="w-40">
+                        <Menu.Item>
+                          <Lucide icon="Copy" className="w-4 h-4 mr-2" /> Copy
+                          Link
+                        </Menu.Item>
+                        <Menu.Item>
+                          <Lucide icon="Trash" className="w-4 h-4 mr-2" />
+                          Delete
+                        </Menu.Item>
+                      </Menu.Items>
+                    </Menu>
+                    <div className="flex flex-col items-center px-5 pb-10 mt-10">
+                      <div className="w-[72px] h-[72px] overflow-hidden rounded-full image-fit border-[3px] border-slate-200/70">
+                        <img
+                          alt="Tailwise - Admin Dashboard Template"
+                          src={faker.photo}
+                        />
+                      </div>
+                      <div className="mt-3 font-medium text-primary text-[0.94rem]">
+                        {faker.name}
+                      </div>
+                      <div className="flex items-center justify-center gap-3 mt-2">
+                        <div className="flex items-center text-slate-500">
+                          <Lucide
+                            icon="Hotel"
+                            className="w-3.5 h-3.5 mr-1.5 stroke-[1.3]"
+                          />
+                          {faker.location}
+                        </div>
+                        <div className="flex items-center text-slate-500">
+                          <Lucide
+                            icon="Calendar"
+                            className="w-3.5 h-3.5 mr-1.5 stroke-[1.3]"
+                          />
+                          {faker.joinedDate}
+                        </div>
+                      </div>
+                      <div className="flex flex-wrap items-center justify-center gap-2 mt-5 sm:flex-row">
+                        <span className="flex items-center text-xs font-medium rounded-md text-primary bg-primary/10 border border-primary/10 px-2 py-0.5">
+                          <span className="-mt-px truncate">
+                            {faker.department}
+                          </span>
+                        </span>
+                        <span className="flex items-center text-xs font-medium rounded-md text-primary bg-primary/10 border border-primary/10 px-2 py-0.5">
+                          <span className="-mt-px truncate">
+                            {faker.position}
+                          </span>
+                        </span>
+                      </div>
+                    </div>
+                    <div className="flex items-center px-5 py-4 border-t border-slate-200/80">
+                      <div className="text-slate-500">
+                        {_.random(20, 100)}+ Connections
+                      </div>
+                      {_.random(0, 1) ? (
+                        <Button
+                          variant="outline-primary"
+                          className="px-4 ml-auto border-primary/50"
+                        >
+                          <Lucide
+                            icon="UserPlus"
+                            className="stroke-[1.3] w-4 h-4 -ml-0.5 mr-2"
+                          />
+                          Connect
+                        </Button>
+                      ) : (
+                        <Button variant="primary" className="px-4 ml-auto">
+                          <Lucide
+                            icon="Check"
+                            className="stroke-[1.3] w-4 h-4 -ml-0.5 mr-2"
+                          />
+                          Connected
+                        </Button>
+                      )}
+                    </div>
+                  </div>
+                ))}
+
+              </div> <div className="grid grid-cols-12 gap-y-10 gap-x-6 mt-3.5">
+                {_.take(users.fakeUsers(), 9).map((faker, fakerKey) => (
+                  <div
+                    className="flex flex-col col-span-12 md:col-span-6 xl:col-span-4 box box--stacked"
+                    key={fakerKey}
+                  >
+                    <Menu className="absolute top-0 right-0 mt-5 mr-5">
+                      <Menu.Button className="w-5 h-5 text-slate-500">
+                        <Lucide
+                          icon="MoreVertical"
+                          className="w-5 h-5 stroke-slate-400/70 fill-slate-400/70"
+                        />
+                      </Menu.Button>
+                      <Menu.Items className="w-40">
+                        <Menu.Item>
+                          <Lucide icon="Copy" className="w-4 h-4 mr-2" /> Copy
+                          Link
+                        </Menu.Item>
+                        <Menu.Item>
+                          <Lucide icon="Trash" className="w-4 h-4 mr-2" />
+                          Delete
+                        </Menu.Item>
+                      </Menu.Items>
+                    </Menu>
+                    <div className="flex flex-col items-center px-5 pb-10 mt-10">
+                      <div className="w-[72px] h-[72px] overflow-hidden rounded-full image-fit border-[3px] border-slate-200/70">
+                        <img
+                          alt="Tailwise - Admin Dashboard Template"
+                          src={faker.photo}
+                        />
+                      </div>
+                      <div className="mt-3 font-medium text-primary text-[0.94rem]">
+                        {faker.name}
+                      </div>
+                      <div className="flex items-center justify-center gap-3 mt-2">
+                        <div className="flex items-center text-slate-500">
+                          <Lucide
+                            icon="Hotel"
+                            className="w-3.5 h-3.5 mr-1.5 stroke-[1.3]"
+                          />
+                          {faker.location}
+                        </div>
+                        <div className="flex items-center text-slate-500">
+                          <Lucide
+                            icon="Calendar"
+                            className="w-3.5 h-3.5 mr-1.5 stroke-[1.3]"
+                          />
+                          {faker.joinedDate}
+                        </div>
+                      </div>
+                      <div className="flex flex-wrap items-center justify-center gap-2 mt-5 sm:flex-row">
+                        <span className="flex items-center text-xs font-medium rounded-md text-primary bg-primary/10 border border-primary/10 px-2 py-0.5">
+                          <span className="-mt-px truncate">
+                            {faker.department}
+                          </span>
+                        </span>
+                        <span className="flex items-center text-xs font-medium rounded-md text-primary bg-primary/10 border border-primary/10 px-2 py-0.5">
+                          <span className="-mt-px truncate">
+                            {faker.position}
+                          </span>
+                        </span>
+                      </div>
+                    </div>
+                    <div className="flex items-center px-5 py-4 border-t border-slate-200/80">
+                      <div className="text-slate-500">
+                        {_.random(20, 100)}+ Connections
+                      </div>
+                      {_.random(0, 1) ? (
+                        <Button
+                          variant="outline-primary"
+                          className="px-4 ml-auto border-primary/50"
+                        >
+                          <Lucide
+                            icon="UserPlus"
+                            className="stroke-[1.3] w-4 h-4 -ml-0.5 mr-2"
+                          />
+                          Connect
+                        </Button>
+                      ) : (
+                        <Button variant="primary" className="px-4 ml-auto">
+                          <Lucide
+                            icon="Check"
+                            className="stroke-[1.3] w-4 h-4 -ml-0.5 mr-2"
+                          />
+                          Connected
+                        </Button>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
 
         {/* Course Details Modal */}
         {selectedCourse && (
