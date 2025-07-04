@@ -75,10 +75,9 @@ class UserStore {
   }
 
   get dashboardRoute(): string {
-    alert(this.isAdmin + " " + this.isTeacher + " " + this.isStudent);
     if (this.isAdmin) return "/dashboard-overview-1";
     if (this.isTeacher) return "/dashboard-overview-2";
-    if (this.isStudent) return "/dashboard-overview-3";
+    if (this.isStudent) return "/dashboard-overview-7";
     return "/login";
   }
 }

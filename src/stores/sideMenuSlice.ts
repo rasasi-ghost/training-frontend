@@ -16,7 +16,7 @@ export interface SideMenuState {
 }
 
 const adminMenu: Array<Menu | string> = [
-  "DASHBOARDS",
+  "admin",
   {
     icon: "GaugeCircle",
     pathname: "/",
@@ -70,7 +70,7 @@ const adminMenu: Array<Menu | string> = [
 ];
 
 const teacherMenu: Array<Menu | string> = [
-  "DASHBOARDS",
+  "s",
   {
     icon: "Album",
     pathname: "/dashboard-overview-3",
@@ -109,7 +109,7 @@ const teacherMenu: Array<Menu | string> = [
 ];
 
 const studentMenu: Array<Menu | string> = [
-  "DASHBOARDS",
+  "Student Dashboard",
   {
     icon: "MousePointerSquare",
     pathname: "/dashboard-overview-6",
@@ -143,7 +143,7 @@ const roleMenuMap = {
 
 // Initialize from localStorage or default to admin
 const getUserRole = (): "Admin" | "Teacher" | "Student" => {
-  const storedRole = localStorage.getItem("role");
+  const storedRole = localStorage.getItem("userRole");
   if (storedRole === "Admin" || storedRole === "Teacher" || storedRole === "Student") {
     return storedRole;
   }

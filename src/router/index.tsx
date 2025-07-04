@@ -106,23 +106,53 @@ function Router() {
             },
             {
               path: "dashboard-overview-4",
-              element: <DashboardOverview4 />,
+              element: <ProtectedRoute />,
+              children: [
+                {
+                  path: "",
+                  element: <DashboardOverview4 />,
+                },
+              ],
             },
             {
               path: "dashboard-overview-5",
-              element: <DashboardOverview5 />,
+              element: <ProtectedRoute />,
+              children: [
+                {
+                  path: "",
+                  element: <DashboardOverview5 />,
+                },
+              ],
             },
             {
               path: "dashboard-overview-6",
-              element: <DashboardOverview6 />,
+              element: <ProtectedRoute />,
+              children: [
+                {
+                  path: "",
+                  element: <DashboardOverview6 />,
+                },
+              ],
             },
             {
               path: "dashboard-overview-7",
-              element: <DashboardOverview7 />,
+              element: <ProtectedRoute />,
+              children: [
+                {
+                  path: "",
+                  element: <DashboardOverview7 />,
+                },
+              ],
             },
             {
               path: "dashboard-overview-8",
-              element: <DashboardOverview8 />,
+              element: <ProtectedRoute />,
+              children: [
+                {
+                  path: "",
+                  element: <DashboardOverview8 />,
+                },
+              ],
             },
             {
               path: "users",
@@ -136,195 +166,483 @@ function Router() {
             },
             {
               path: "departments",
-              element: <Departments />,
+              element: <ProtectedRoute />,
+              children: [
+                {
+                  path: "",
+                  element: <Departments />,
+                },
+              ],
             },
             {
               path: "add-user",
-              element: <AddUser />,
+              element: <ProtectedRoute allowedRoles={[UserRole.Admin]} />,
+              children: [
+                {
+                  path: "",
+                  element: <AddUser />,
+                },
+              ],
             },
             {
               path: "profile-overview",
-              element: <ProfileOverview />,
+              element: <ProtectedRoute />,
+              children: [
+                {
+                  path: "",
+                  element: <ProfileOverview />,
+                },
+              ],
             },
             {
               path: "settings",
-              element: <Settings />,
+              element: <ProtectedRoute />,
+              children: [
+                {
+                  path: "",
+                  element: <Settings />,
+                },
+              ],
             },
             {
               path: "billing",
-              element: <Billing />,
+              element: <ProtectedRoute />,
+              children: [
+                {
+                  path: "",
+                  element: <Billing />,
+                },
+              ],
             },
             {
               path: "invoice",
-              element: <Invoice />,
+              element: <ProtectedRoute />,
+              children: [
+                {
+                  path: "",
+                  element: <Invoice />,
+                },
+              ],
             },
             {
               path: "categories",
-              element: <Categories />,
+              element: <ProtectedRoute />,
+              children: [
+                {
+                  path: "",
+                  element: <Categories />,
+                },
+              ],
             },
             {
               path: "add-product",
-              element: <AddProduct />,
+              element: <ProtectedRoute />,
+              children: [
+                {
+                  path: "",
+                  element: <AddProduct />,
+                },
+              ],
             },
             {
               path: "product-list",
-              element: <ProductList />,
+              element: <ProtectedRoute />,
+              children: [
+                {
+                  path: "",
+                  element: <ProductList />,
+                },
+              ],
             },
             {
               path: "product-grid",
-              element: <ProductGrid />,
+              element: <ProtectedRoute />,
+              children: [
+                {
+                  path: "",
+                  element: <ProductGrid />,
+                },
+              ],
             },
             {
               path: "transaction-list",
-              element: <TransactionList />,
+              element: <ProtectedRoute />,
+              children: [
+                {
+                  path: "",
+                  element: <TransactionList />,
+                },
+              ],
             },
             {
               path: "transaction-detail",
-              element: <TransactionDetail />,
+              element: <ProtectedRoute />,
+              children: [
+                {
+                  path: "",
+                  element: <TransactionDetail />,
+                },
+              ],
             },
             {
               path: "seller-list",
-              element: <SellerList />,
+              element: <ProtectedRoute />,
+              children: [
+                {
+                  path: "",
+                  element: <SellerList />,
+                },
+              ],
             },
             {
               path: "seller-detail",
-              element: <SellerDetail />,
+              element: <ProtectedRoute />,
+              children: [
+                {
+                  path: "",
+                  element: <SellerDetail />,
+                },
+              ],
             },
             {
               path: "reviews",
-              element: <Reviews />,
+              element: <ProtectedRoute />,
+              children: [
+                {
+                  path: "",
+                  element: <Reviews />,
+                },
+              ],
             },
             {
               path: "inbox",
-              element: <Inbox />,
+              element: <ProtectedRoute />,
+              children: [
+                {
+                  path: "",
+                  element: <Inbox />,
+                },
+              ],
             },
             {
               path: "file-manager-list",
-              element: <FileManagerList />,
+              element: <ProtectedRoute />,
+              children: [
+                {
+                  path: "",
+                  element: <FileManagerList />,
+                },
+              ],
             },
             {
               path: "file-manager-grid",
-              element: <FileManagerGrid />,
+              element: <ProtectedRoute />,
+              children: [
+                {
+                  path: "",
+                  element: <FileManagerGrid />,
+                },
+              ],
             },
             {
               path: "chat",
-              element: <Chat />,
+              element: <ProtectedRoute />,
+              children: [
+                {
+                  path: "",
+                  element: <Chat />,
+                },
+              ],
             },
             {
               path: "calendar",
-              element: <Calendar />,
+              element: <ProtectedRoute />,
+              children: [
+                {
+                  path: "",
+                  element: <Calendar />,
+                },
+              ],
             },
             {
               path: "point-of-sale",
-              element: <PointOfSale />,
+              element: <ProtectedRoute />,
+              children: [
+                {
+                  path: "",
+                  element: <PointOfSale />,
+                },
+              ],
             },
             {
               path: "creative",
-              element: <Creative />,
+              element: <ProtectedRoute />,
+              children: [
+                {
+                  path: "",
+                  element: <Creative />,
+                },
+              ],
             },
             {
               path: "dynamic",
-              element: <Dynamic />,
+              element: <ProtectedRoute />,
+              children: [
+                {
+                  path: "",
+                  element: <Dynamic />,
+                },
+              ],
             },
             {
               path: "interactive",
-              element: <Interactive />,
+              element: <ProtectedRoute />,
+              children: [
+                {
+                  path: "",
+                  element: <Interactive />,
+                },
+              ],
             },
             {
               path: "regular-table",
-              element: <RegularTable />,
+              element: <ProtectedRoute />,
+              children: [
+                {
+                  path: "",
+                  element: <RegularTable />,
+                },
+              ],
             },
             {
               path: "tabulator",
-              element: <Tabulator />,
+              element: <ProtectedRoute />,
+              children: [
+                {
+                  path: "",
+                  element: <Tabulator />,
+                },
+              ],
             },
             {
               path: "modal",
-              element: <Modal />,
+              element: <ProtectedRoute />,
+              children: [
+                {
+                  path: "",
+                  element: <Modal />,
+                },
+              ],
             },
             {
               path: "slideover",
-              element: <Slideover />,
+              element: <ProtectedRoute />,
+              children: [
+                {
+                  path: "",
+                  element: <Slideover />,
+                },
+              ],
             },
             {
               path: "notification",
-              element: <Notification />,
+              element: <ProtectedRoute />,
+              children: [
+                {
+                  path: "",
+                  element: <Notification />,
+                },
+              ],
             },
             {
               path: "tab",
-              element: <Tab />,
+              element: <ProtectedRoute />,
+              children: [
+                {
+                  path: "",
+                  element: <Tab />,
+                },
+              ],
             },
             {
               path: "accordion",
-              element: <Accordion />,
+              element: <ProtectedRoute />,
+              children: [
+                {
+                  path: "",
+                  element: <Accordion />,
+                },
+              ],
             },
             {
               path: "button",
-              element: <Button />,
+              element: <ProtectedRoute />,
+              children: [
+                {
+                  path: "",
+                  element: <Button />,
+                },
+              ],
             },
             {
               path: "alert",
-              element: <Alert />,
+              element: <ProtectedRoute />,
+              children: [
+                {
+                  path: "",
+                  element: <Alert />,
+                },
+              ],
             },
             {
               path: "progress-bar",
-              element: <ProgressBar />,
+              element: <ProtectedRoute />,
+              children: [
+                {
+                  path: "",
+                  element: <ProgressBar />,
+                },
+              ],
             },
             {
               path: "tooltip",
-              element: <Tooltip />,
+              element: <ProtectedRoute />,
+              children: [
+                {
+                  path: "",
+                  element: <Tooltip />,
+                },
+              ],
             },
             {
               path: "dropdown",
-              element: <Dropdown />,
+              element: <ProtectedRoute />,
+              children: [
+                {
+                  path: "",
+                  element: <Dropdown />,
+                },
+              ],
             },
             {
               path: "typography",
-              element: <Typography />,
+              element: <ProtectedRoute />,
+              children: [
+                {
+                  path: "",
+                  element: <Typography />,
+                },
+              ],
             },
             {
               path: "icon",
-              element: <Icon />,
+              element: <ProtectedRoute />,
+              children: [
+                {
+                  path: "",
+                  element: <Icon />,
+                },
+              ],
             },
             {
               path: "loading-icon",
-              element: <LoadingIcon />,
+              element: <ProtectedRoute />,
+              children: [
+                {
+                  path: "",
+                  element: <LoadingIcon />,
+                },
+              ],
             },
             {
               path: "regular-form",
-              element: <RegularForm />,
+              element: <ProtectedRoute />,
+              children: [
+                {
+                  path: "",
+                  element: <RegularForm />,
+                },
+              ],
             },
             {
               path: "datepicker",
-              element: <Datepicker />,
+              element: <ProtectedRoute />,
+              children: [
+                {
+                  path: "",
+                  element: <Datepicker />,
+                },
+              ],
             },
             {
               path: "tom-select",
-              element: <TomSelect />,
+              element: <ProtectedRoute />,
+              children: [
+                {
+                  path: "",
+                  element: <TomSelect />,
+                },
+              ],
             },
             {
               path: "file-upload",
-              element: <FileUpload />,
+              element: <ProtectedRoute />,
+              children: [
+                {
+                  path: "",
+                  element: <FileUpload />,
+                },
+              ],
             },
             {
               path: "wysiwyg-editor",
-              element: <WysiwygEditor />,
+              element: <ProtectedRoute />,
+              children: [
+                {
+                  path: "",
+                  element: <WysiwygEditor />,
+                },
+              ],
             },
             {
               path: "validation",
-              element: <Validation />,
+              element: <ProtectedRoute />,
+              children: [
+                {
+                  path: "",
+                  element: <Validation />,
+                },
+              ],
             },
             {
               path: "chart",
-              element: <Chart />,
+              element: <ProtectedRoute />,
+              children: [
+                {
+                  path: "",
+                  element: <Chart />,
+                },
+              ],
             },
             {
               path: "slider",
-              element: <Slider />,
+              element: <ProtectedRoute />,
+              children: [
+                {
+                  path: "",
+                  element: <Slider />,
+                },
+              ],
             },
             {
               path: "image-zoom",
-              element: <ImageZoom />,
+              element: <ProtectedRoute />,
+              children: [
+                {
+                  path: "",
+                  element: <ImageZoom />,
+                },
+              ],
             },
           ],
         },
