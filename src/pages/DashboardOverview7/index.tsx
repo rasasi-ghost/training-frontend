@@ -7,10 +7,8 @@ import Button from "@/components/Base/Button";
 import { CoursesController } from "@/controllers";
 import LoadingIcon from "@/components/Base/LoadingIcon";
 
-
 import { Menu } from "@/components/Base/Headless";
 
-import transactions from "@/fakers/transactions";
 import Table from "@/components/Base/Table";
 import clsx from "clsx";
 import _ from "lodash";
@@ -263,136 +261,128 @@ const StudentDashboard: React.FC = observer(() => {
           </div>
         </div>
         <div className="mt-2 overflow-auto lg:overflow-visible">
-          <Table className="border-spacing-y-[10px] border-separate">
-            <Table.Tbody>
-              {_.take(transactions.fakeTransactions(), 5).map(
-                (faker, fakerKey) => (
-                  <Table.Tr key={fakerKey}>
-                    <Table.Td className="box shadow-[5px_3px_5px_#00000005] first:border-l last:border-r first:rounded-l-[0.6rem] last:rounded-r-[0.6rem] rounded-l-none rounded-r-none border-x-0 dark:bg-darkmode-600">
-                      <div className="flex items-center">
-                        <Lucide
-                          icon={faker.category.icon}
-                          className="w-6 h-6 text-theme-1 fill-primary/10 stroke-[0.8]"
-                        />
-                        <div className="ml-3.5">
-                          <a href="" className="font-medium whitespace-nowrap">
-                            {faker.orderId}
-                          </a>
-                          <div className="mt-1 text-xs text-slate-500 whitespace-nowrap">
-                            {faker.category.name}
-                          </div>
-                        </div>
-                      </div>
-                    </Table.Td>
-                    <Table.Td className="w-60 box shadow-[5px_3px_5px_#00000005] first:border-l last:border-r first:rounded-l-[0.6rem] last:rounded-r-[0.6rem] rounded-l-none rounded-r-none border-x-0 dark:bg-darkmode-600">
-                      <div className="mb-1 text-xs text-slate-500 whitespace-nowrap">
-                        Customer Name
-                      </div>
-                      <a href="" className="flex items-center text-primary">
-                        <Lucide
-                          icon="ExternalLink"
-                          className="w-3.5 h-3.5 stroke-[1.7]"
-                        />
-                        <div className="ml-1.5 whitespace-nowrap">
-                          {faker.user.name}
-                        </div>
-                      </a>
-                    </Table.Td>
-                    <Table.Td className="w-44 box shadow-[5px_3px_5px_#00000005] first:border-l last:border-r first:rounded-l-[0.6rem] last:rounded-r-[0.6rem] rounded-l-none rounded-r-none border-x-0 dark:bg-darkmode-600">
-                      <div className="mb-1.5 text-xs text-slate-500 whitespace-nowrap">
-                        Purchased Items
-                      </div>
-                      <div className="flex mb-1">
-                        <div className="w-5 h-5 image-fit zoom-in">
-                          <Tippy
-                            as="img"
-                            alt="Tailwise - Admin Dashboard Template"
-                            className="rounded-full shadow-[0px_0px_0px_2px_#fff,_1px_1px_5px_rgba(0,0,0,0.32)] dark:shadow-[0px_0px_0px_2px_#3f4865,_1px_1px_5px_rgba(0,0,0,0.32)]"
-                            src={faker.products[0].images[0].path}
-                            content={faker.products[0].name}
-                          />
-                        </div>
-                        <div className="w-5 h-5 -ml-1.5 image-fit zoom-in">
-                          <Tippy
-                            as="img"
-                            alt="Tailwise - Admin Dashboard Template"
-                            className="rounded-full shadow-[0px_0px_0px_2px_#fff,_1px_1px_5px_rgba(0,0,0,0.32)] dark:shadow-[0px_0px_0px_2px_#3f4865,_1px_1px_5px_rgba(0,0,0,0.32)]"
-                            src={faker.products[1].images[0].path}
-                            content={faker.products[1].name}
-                          />
-                        </div>
-                        <div className="w-5 h-5 -ml-1.5 image-fit zoom-in">
-                          <Tippy
-                            as="img"
-                            alt="Tailwise - Admin Dashboard Template"
-                            className="rounded-full shadow-[0px_0px_0px_2px_#fff,_1px_1px_5px_rgba(0,0,0,0.32)] dark:shadow-[0px_0px_0px_2px_#3f4865,_1px_1px_5px_rgba(0,0,0,0.32)]"
-                            src={faker.products[2].images[0].path}
-                            content={faker.products[2].name}
-                          />
-                        </div>
-                      </div>
-                    </Table.Td>
-                    <Table.Td className="w-44 box shadow-[5px_3px_5px_#00000005] first:border-l last:border-r first:rounded-l-[0.6rem] last:rounded-r-[0.6rem] rounded-l-none rounded-r-none border-x-0 dark:bg-darkmode-600">
-                      <div className="mb-1 text-xs text-slate-500 whitespace-nowrap">
-                        Status
-                      </div>
-                      <div
-                        className={clsx([
-                          "flex items-center",
-                          faker.orderStatus.textColor,
-                        ])}
-                      >
-                        <Lucide
-                          icon={faker.orderStatus.icon}
-                          className="w-3.5 h-3.5 stroke-[1.7]"
-                        />
-                        <div className="ml-1.5 whitespace-nowrap">
-                          {faker.orderStatus.name}
-                        </div>
-                      </div>
-                    </Table.Td>
-                    <Table.Td className="w-44 box shadow-[5px_3px_5px_#00000005] first:border-l last:border-r first:rounded-l-[0.6rem] last:rounded-r-[0.6rem] rounded-l-none rounded-r-none border-x-0 dark:bg-darkmode-600">
-                      <div className="mb-1 text-xs text-slate-500 whitespace-nowrap">
-                        Date
-                      </div>
-                      <div className="whitespace-nowrap">{faker.orderDate}</div>
-                    </Table.Td>
-                    <Table.Td className="w-20 relative py-0 box shadow-[5px_3px_5px_#00000005] first:border-l last:border-r first:rounded-l-[0.6rem] last:rounded-r-[0.6rem] rounded-l-none rounded-r-none border-x-0 dark:bg-darkmode-600">
-                      <div className="flex items-center justify-center">
-                        <Menu className="h-5">
-                          <Menu.Button className="w-5 h-5 text-slate-500">
+          {isLoading ? (
+            // Shimmer effect for loading state
+            <div className="border-spacing-y-[10px] border-separate">
+              {[...Array(5)].map((_, index) => (
+                <div key={index} className="flex w-full mb-3">
+                  <div className="w-full h-16 box animate-pulse bg-slate-200 dark:bg-darkmode-400 rounded-[0.6rem]"></div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <Table className="border-spacing-y-[10px] border-separate">
+              <Table.Tbody>
+                {approvedCourses.length > 0 ? (
+                  approvedCourses.map((course, index) => {
+                    const enrollment = CoursesController.getEnrollmentForCourse(course.id);
+                    return (
+                      <Table.Tr key={course.id}>
+                        <Table.Td className="box shadow-[5px_3px_5px_#00000005] first:border-l last:border-r first:rounded-l-[0.6rem] last:rounded-r-[0.6rem] rounded-l-none rounded-r-none border-x-0 dark:bg-darkmode-600">
+                          <div className="flex items-center">
                             <Lucide
-                              icon="MoreVertical"
-                              className="w-5 h-5 stroke-slate-400/70 fill-slate-400/70"
+                              icon="BookOpen"
+                              className="w-6 h-6 text-theme-1 fill-primary/10 stroke-[0.8]"
                             />
-                          </Menu.Button>
-                          <Menu.Items className="w-40">
-                            <Menu.Item>
-                              <Lucide
-                                icon="WalletCards"
-                                className="w-4 h-4 mr-2"
-                              />{" "}
-                              View Details
-                            </Menu.Item>
-                            <Menu.Item>
-                              <Lucide icon="FilePen" className="w-4 h-4 mr-2" />
-                              Edit Order
-                            </Menu.Item>
-                            <Menu.Item>
-                              <Lucide icon="Printer" className="w-4 h-4 mr-2" />
-                              Print Invoice
-                            </Menu.Item>
-                          </Menu.Items>
-                        </Menu>
+                            <div className="ml-3.5">
+                              <a href="" className="font-medium whitespace-nowrap">
+                                {course.title}
+                              </a>
+                              <div className="mt-1 text-xs text-slate-500 whitespace-nowrap">
+                                {course.credits} Credits
+                              </div>
+                            </div>
+                          </div>
+                        </Table.Td>
+                        <Table.Td className="w-60 box shadow-[5px_3px_5px_#00000005] first:border-l last:border-r first:rounded-l-[0.6rem] last:rounded-r-[0.6rem] rounded-l-none rounded-r-none border-x-0 dark:bg-darkmode-600">
+                          <div className="mb-1 text-xs text-slate-500 whitespace-nowrap">
+                            Instructor
+                          </div>
+                          <div className="flex items-center">
+                            <Lucide
+                              icon="User"
+                              className="w-3.5 h-3.5 stroke-[1.7] text-slate-500 mr-1.5"
+                            />
+                            <div className="whitespace-nowrap">
+                              {course.instructorName}
+                            </div>
+                          </div>
+                        </Table.Td>
+                        <Table.Td className="w-44 box shadow-[5px_3px_5px_#00000005] first:border-l last:border-r first:rounded-l-[0.6rem] last:rounded-r-[0.6rem] rounded-l-none rounded-r-none border-x-0 dark:bg-darkmode-600">
+                          <div className="mb-1 text-xs text-slate-500 whitespace-nowrap">
+                            Status
+                          </div>
+                          <div className="flex items-center text-success">
+                            <Lucide
+                              icon="CheckCircle"
+                              className="w-3.5 h-3.5 stroke-[1.7]"
+                            />
+                            <div className="ml-1.5 whitespace-nowrap">
+                              Active
+                            </div>
+                          </div>
+                        </Table.Td>
+                        <Table.Td className="w-44 box shadow-[5px_3px_5px_#00000005] first:border-l last:border-r first:rounded-l-[0.6rem] last:rounded-r-[0.6rem] rounded-l-none rounded-r-none border-x-0 dark:bg-darkmode-600">
+                          <div className="mb-1 text-xs text-slate-500 whitespace-nowrap">
+                            Start Date
+                          </div>
+                          <div className="whitespace-nowrap">{course.startDate?.substring(0, 10) || "N/A"}</div>
+                        </Table.Td>
+                        <Table.Td className="w-44 box shadow-[5px_3px_5px_#00000005] first:border-l last:border-r first:rounded-l-[0.6rem] last:rounded-r-[0.6rem] rounded-l-none rounded-r-none border-x-0 dark:bg-darkmode-600">
+                          <div className="mb-1 text-xs text-slate-500 whitespace-nowrap">
+                            End Date
+                          </div>
+                          <div className="whitespace-nowrap">{course.endDate?.substring(0, 10) || "N/A"}</div>
+                        </Table.Td>
+                        <Table.Td className="w-20 relative py-0 box shadow-[5px_3px_5px_#00000005] first:border-l last:border-r first:rounded-l-[0.6rem] last:rounded-r-[0.6rem] rounded-l-none rounded-r-none border-x-0 dark:bg-darkmode-600">
+                          <div className="flex items-center justify-center">
+                            <Menu className="h-5">
+                              <Menu.Button className="w-5 h-5 text-slate-500">
+                                <Lucide
+                                  icon="MoreVertical"
+                                  className="w-5 h-5 stroke-slate-400/70 fill-slate-400/70"
+                                />
+                              </Menu.Button>
+                              <Menu.Items className="w-40">
+                                <Menu.Item>
+                                  <Lucide
+                                    icon="BookOpen"
+                                    className="w-4 h-4 mr-2"
+                                  />{" "}
+                                  View Details
+                                </Menu.Item>
+                                <Menu.Item>
+                                  <Lucide icon="MessageSquare" className="w-4 h-4 mr-2" />
+                                  Contact Instructor
+                                </Menu.Item>
+                                <Menu.Item>
+                                  <Lucide icon="FileText" className="w-4 h-4 mr-2" />
+                                  View Syllabus
+                                </Menu.Item>
+                              </Menu.Items>
+                            </Menu>
+                          </div>
+                        </Table.Td>
+                      </Table.Tr>
+                    );
+                  })
+                ) : (
+                  <Table.Tr>
+                    <Table.Td colSpan={6} className="text-center py-4 box shadow-[5px_3px_5px_#00000005] rounded-[0.6rem] dark:bg-darkmode-600">
+                      <div className="flex flex-col items-center">
+                        <Lucide icon="Search" className="w-16 h-16 text-slate-300 mb-2" />
+                        <p className="text-slate-500">No active courses found</p>
+                        <Button variant="primary" className="mt-4">
+                          Browse Available Courses
+                        </Button>
                       </div>
                     </Table.Td>
                   </Table.Tr>
-                )
-              )}
-            </Table.Tbody>
-          </Table>
+                )}
+              </Table.Tbody>
+            </Table>
+          )}
         </div>
-
       </div>
     </div>
   );
