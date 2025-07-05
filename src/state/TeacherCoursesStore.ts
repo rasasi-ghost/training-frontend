@@ -5,7 +5,8 @@ import TeacherService, {
   Lecture,
   CreateCourseRequest,
   UpdateCourseRequest,
-  LectureRequest
+  LectureRequest,
+  TeacherApprovalStatus
 } from "../services/TeacherService";
 
 class TeacherCoursesStore {
@@ -14,6 +15,8 @@ class TeacherCoursesStore {
   courseEnrollments: Enrollment[] = [];
   loading: boolean = false;
   error: string | null = null;
+  approvalStatus: TeacherApprovalStatus = TeacherApprovalStatus.Pending;
+  approvalMessage: string = "";
 
   constructor() {
     makeAutoObservable(this);
@@ -26,11 +29,34 @@ class TeacherCoursesStore {
     this.courseEnrollments = [];
     this.loading = false;
     this.error = null;
+    this.approvalStatus = TeacherApprovalStatus.Pending;
+    this.approvalMessage = "";
   }
 
   // Error handling
   setError(error: string | null) {
     this.error = error;
+  }
+
+  // Approval Status
+  async checkApprovalStatus() {
+    this.loading = true;
+    this.error = null;
+    try {
+      const response = await TeacherService.checkApprovalStatus();
+      runInAction(() => {
+        this.approvalStatus = response.status;
+        this.approvalMessage = response.message;
+        this.loading = false;
+      });
+      return this.approvalStatus === TeacherApprovalStatus.Approved;
+    } catch (error) {
+      runInAction(() => {
+        this.error = error instanceof Error ? error.message : "Failed to check approval status";
+        this.loading = false;
+      });
+      throw error;
+    }
   }
 
   // Course operations

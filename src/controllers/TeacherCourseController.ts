@@ -2,10 +2,29 @@ import TeacherCoursesStore from "../state/TeacherCoursesStore";
 import TeacherService, { 
   CreateCourseRequest, 
   UpdateCourseRequest, 
-  LectureRequest 
+  LectureRequest,
+  TeacherApprovalStatus
 } from "../services/TeacherService";
 
 class TeacherCourseController {
+  // Approval status
+  async checkApprovalStatus() {
+    try {
+      const isApproved = await TeacherCoursesStore.checkApprovalStatus();
+      return {
+        success: true,
+        isApproved,
+        status: TeacherCoursesStore.approvalStatus,
+        message: TeacherCoursesStore.approvalMessage
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : "Failed to check approval status"
+      };
+    }
+  }
+
   // Course operations
   async getTeacherCourses() {
     try {

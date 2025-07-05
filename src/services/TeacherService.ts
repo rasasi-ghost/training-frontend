@@ -1,5 +1,11 @@
 import ApiService from "./ApiService";
 
+export enum TeacherApprovalStatus {
+  Pending = 0,
+  Approved = 1,
+  Rejected = 2
+}
+
 export interface Course {
   id: string;
   title: string;
@@ -68,7 +74,17 @@ export interface SetGradeRequest {
   grade: string;
 }
 
+export interface ApprovalStatusResponse {
+  status: TeacherApprovalStatus;
+  message: string;
+}
+
 class TeacherService {
+  // Approval Status
+  public async checkApprovalStatus(): Promise<ApprovalStatusResponse> {
+    return ApiService.get<ApprovalStatusResponse>("/teacher/approval-status");
+  }
+
   // Courses
   public async getTeacherCourses(): Promise<Course[]> {
     return ApiService.get<Course[]>("/teacher/courses");
