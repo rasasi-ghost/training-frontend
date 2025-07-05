@@ -360,7 +360,7 @@ function Main() {
                 </a>
               </div>
               {/* BEGIN: Breadcrumb */}
-              <Breadcrumb className="flex-1 hidden xl:block">
+              {/* <Breadcrumb className="flex-1 hidden xl:block">
                 <Breadcrumb.Link
                   className="dark:before:bg-chevron-white"
                   to="/"
@@ -380,7 +380,7 @@ function Main() {
                 >
                   Analytics
                 </Breadcrumb.Link>
-              </Breadcrumb>
+              </Breadcrumb> */}
               {/* END: Breadcrumb */}
               {/* BEGIN: Search */}
               <div
@@ -406,7 +406,7 @@ function Main() {
                     className="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-darkmode-400"
                     onClick={(e) => {
                       e.preventDefault();
-                      setActivitiesPanel(true);
+                      // setActivitiesPanel(true);
                     }}
                   >
                     <Lucide icon="LayoutGrid" className="w-[18px] h-[18px]" />
@@ -426,7 +426,7 @@ function Main() {
                     className="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-darkmode-400"
                     onClick={(e) => {
                       e.preventDefault();
-                      setNotificationsPanel(true);
+                      // setNotificationsPanel(true);
                     }}
                   >
                     <Lucide icon="Bell" className="w-[18px] h-[18px]" />
@@ -440,7 +440,7 @@ function Main() {
                     />
                   </Menu.Button>
                   <Menu.Items className="w-56 mt-1">
-                    <Menu.Item
+                    {/* <Menu.Item
                       onClick={() => {
                         setSwitchAccount(true);
                       }}
@@ -481,7 +481,7 @@ function Main() {
                     >
                       <Lucide icon="Users" className="w-4 h-4 mr-2" />
                       Profile Info
-                    </Menu.Item>
+                    </Menu.Item> */}
                     <Menu.Item
                       onClick={() => {
                         navigate("login");

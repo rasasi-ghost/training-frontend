@@ -378,7 +378,7 @@ function Main() {
                 </a>
               </div>
               {/* BEGIN: Breadcrumb */}
-              <Breadcrumb light className="flex-1 hidden xl:block">
+              {/* <Breadcrumb light className="flex-1 hidden xl:block">
                 <Breadcrumb.Link
                   className="dark:before:bg-chevron-white"
                   to="/"
@@ -398,7 +398,7 @@ function Main() {
                 >
                   Analytics
                 </Breadcrumb.Link>
-              </Breadcrumb>
+              </Breadcrumb> */}
               {/* END: Breadcrumb */}
               {/* BEGIN: Search */}
               <div
@@ -424,7 +424,7 @@ function Main() {
                     className="p-2 text-white rounded-full hover:bg-white/5"
                     onClick={(e) => {
                       e.preventDefault();
-                      setActivitiesPanel(true);
+                      // setActivitiesPanel(true);
                     }}
                   >
                     <Lucide icon="LayoutGrid" className="w-[18px] h-[18px]" />
@@ -444,7 +444,7 @@ function Main() {
                     className="p-2 text-white rounded-full hover:bg-white/5"
                     onClick={(e) => {
                       e.preventDefault();
-                      setNotificationsPanel(true);
+                      // setNotificationsPanel(true);
                     }}
                   >
                     <Lucide icon="Bell" className="w-[18px] h-[18px]" />
@@ -458,48 +458,8 @@ function Main() {
                     />
                   </Menu.Button>
                   <Menu.Items className="w-56 mt-1">
-                    <Menu.Item
-                      onClick={() => {
-                        setSwitchAccount(true);
-                      }}
-                    >
-                      <Lucide icon="ToggleLeft" className="w-4 h-4 mr-2" />
-                      Switch Account
-                    </Menu.Item>
-                    <Menu.Divider />
-                    <Menu.Item
-                      onClick={() => {
-                        navigate("settings?page=connected-services");
-                      }}
-                    >
-                      <Lucide icon="Settings" className="w-4 h-4 mr-2" />
-                      Connected Services
-                    </Menu.Item>
-                    <Menu.Item
-                      onClick={() => {
-                        navigate("settings?page=email-settings");
-                      }}
-                    >
-                      <Lucide icon="Inbox" className="w-4 h-4 mr-2" />
-                      Email Settings
-                    </Menu.Item>
-                    <Menu.Item
-                      onClick={() => {
-                        navigate("settings?page=security");
-                      }}
-                    >
-                      <Lucide icon="Lock" className="w-4 h-4 mr-2" />
-                      Reset Password
-                    </Menu.Item>
-                    <Menu.Divider />
-                    <Menu.Item
-                      onClick={() => {
-                        navigate("settings");
-                      }}
-                    >
-                      <Lucide icon="Users" className="w-4 h-4 mr-2" />
-                      Profile Info
-                    </Menu.Item>
+               
+                
                     <Menu.Item
                       onClick={() => {
                         navigate("login");

@@ -23,31 +23,12 @@ const schema = yup.object({
   password: yup.string().required("Password is required").min(6, "Password must be at least 6 characters"),
   displayName: yup.string().required("Display name is required"),
   role: yup.number().required("Role is required"),
-  isSuperAdmin: yup.boolean().when("role", {
-    is: UserRole.Admin,
-    then: yup.boolean().optional(),
-    otherwise: yup.boolean().optional(),
-  }),
-  department: yup.string().when("role", {
-    is: UserRole.Teacher,
-    then: yup.string().optional(),
-    otherwise: yup.string().optional(),
-  }),
-  qualification: yup.string().when("role", {
-    is: UserRole.Teacher,
-    then: yup.string().optional(),
-    otherwise: yup.string().optional(),
-  }),
-  studentId: yup.string().when("role", {
-    is: UserRole.Student,
-    then: yup.string().optional(),
-    otherwise: yup.string().optional(),
-  }),
-  year: yup.number().positive().integer().when("role", {
-    is: UserRole.Student,
-    then: yup.number().positive("Year must be positive").integer("Year must be an integer").optional(),
-    otherwise: yup.number().optional(),
-  }),
+  isSuperAdmin: yup.boolean().optional(),
+  department: yup.string().optional(),
+  qualification: yup.string().optional(),
+  studentId: yup.string().optional(),
+  year: yup.number().transform((value) => (isNaN(value) ? undefined : value))
+    .nullable().optional(),
 });
 
 type FormData = yup.InferType<typeof schema>;
@@ -107,9 +88,8 @@ const UserFormModal: React.FC<UserFormModalProps> = ({
         userData.qualification = data.qualification;
       } else if (data.role === UserRole.Student) {
         userData.studentId = data.studentId;
-        userData.year = data.year;
+        userData.year = data.year || undefined;
       }
-
       const result = await AdminUsecasesController.createUser(userData);
       
       if (result.success) {

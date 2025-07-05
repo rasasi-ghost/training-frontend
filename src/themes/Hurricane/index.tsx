@@ -163,7 +163,7 @@ function Main() {
           <div className="absolute transition-[padding] duration-100 pl-[84px] xl:pl-[275px] group-[.side-menu--collapsed]:xl:pl-[100px] xl:-ml-2.5 h-full inset-x-0">
             <div className="flex items-center w-full h-full px-5">
               {/* BEGIN: Breadcrumb */}
-              <Breadcrumb light className="flex-1 hidden xl:block">
+              {/* <Breadcrumb light className="flex-1 hidden xl:block">
                 <Breadcrumb.Link
                   className="dark:before:bg-chevron-white"
                   to="/"
@@ -183,7 +183,7 @@ function Main() {
                 >
                   Analytics
                 </Breadcrumb.Link>
-              </Breadcrumb>
+              </Breadcrumb> */}
               {/* END: Breadcrumb */}
               {/* BEGIN: Search */}
               <div
@@ -209,7 +209,7 @@ function Main() {
                     className="p-2 rounded-full hover:bg-white/5"
                     onClick={(e) => {
                       e.preventDefault();
-                      setActivitiesPanel(true);
+                      // setActivitiesPanel(true);
                     }}
                   >
                     <Lucide
@@ -235,7 +235,7 @@ function Main() {
                     className="p-2 rounded-full hover:bg-white/5"
                     onClick={(e) => {
                       e.preventDefault();
-                      setNotificationsPanel(true);
+                      // setNotificationsPanel(true);
                     }}
                   >
                     <Lucide
@@ -252,7 +252,7 @@ function Main() {
                     />
                   </Menu.Button>
                   <Menu.Items className="w-56 mt-1">
-                    <Menu.Item
+                    {/* <Menu.Item
                       onClick={() => {
                         setSwitchAccount(true);
                       }}
@@ -293,7 +293,7 @@ function Main() {
                     >
                       <Lucide icon="Users" className="w-4 h-4 mr-2" />
                       Profile Info
-                    </Menu.Item>
+                    </Menu.Item> */}
                     <Menu.Item
                       onClick={() => {
                         navigate("login");
