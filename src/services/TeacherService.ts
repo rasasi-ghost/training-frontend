@@ -116,6 +116,13 @@ class TeacherService {
     return ApiService.delete<{message: string}>(`/teacher/courses/${courseId}/lectures/${lectureId}`);
   }
 
+  // Get course lectures
+  public async getCourseLectures(courseId: string): Promise<any> {
+    return ApiService.get<{data: {lectures: Lecture[]}}>(
+      `/teacher/courses/${courseId}/lectures`
+    );
+  }
+
   // Enrollments
   public async getCourseEnrollments(courseId: string): Promise<Enrollment[]> {
     return ApiService.get<Enrollment[]>(`/teacher/courses/${courseId}/enrollments`);

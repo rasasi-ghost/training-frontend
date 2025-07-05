@@ -252,63 +252,14 @@ const TeacherDashboard: React.FC = observer(() => {
       <div className="col-span-12">
         <div className="flex flex-col md:h-10 gap-y-3 md:items-center md:flex-row">
           <div className="text-base font-medium group-[.mode--light]:text-white">
-            Teacher Dashboard
+            Course Enrollment Management 
           </div>
         </div>
 
         {/* Statistics Cards */}
         <div className="flex flex-col gap-8 mt-3.5">
-          <div className="grid grid-cols-12 gap-5">
-            <CourseStatCard
-              title="Total Courses"
-              subtitle="All Your Courses"
-              icon="BookOpen"
-              count={courses.length}
-              loading={loading}
-              colorClass="text-primary"
-            />
-            <CourseStatCard
-              title="Active Courses"
-              subtitle="Currently Running"
-              icon="CheckCircle"
-              count={activeCourses}
-              status="Active"
-              loading={loading}
-              colorClass="text-success"
-            />
-            <CourseStatCard
-              title="Inactive Courses"
-              subtitle="Not Currently Active"
-              icon="XCircle"
-              count={inactiveCourses}
-              loading={loading}
-              colorClass="text-danger"
-            />
-            <CourseStatCard
-              title="Total Enrollments"
-              subtitle="All Student Enrollments"
-              icon="Users"
-              count={totalEnrollments}
-              loading={loading}
-              colorClass="text-warning"
-            />
-          </div>
-          <div className="flex flex-col md:h-10 gap-y-3 md:items-center md:flex-row">
-            <div className="text-base font-medium group-[.mode--light]:text-white">
-              My Courses
-            </div>
-            <div className="flex flex-col sm:flex-row gap-x-3 gap-y-2 md:ml-auto">
-              <Button
-                variant="primary"
-                className="group-[.mode--light]:!bg-white/[0.12] group-[.mode--light]:!text-slate-200 group-[.mode--light]:!border-transparent"
-                onClick={handleCreateCourse}
-                disabled={loading || approvalStatus !== TeacherApprovalStatus.Approved}
-              >
-                <Lucide icon="PlusCircle" className="stroke-[1.3] w-4 h-4 mr-2" />{" "}
-                Create New Course
-              </Button>
-            </div>
-          </div>
+          
+          
           {/* Courses Table */}
           <div className="flex flex-col box box--stacked">
 

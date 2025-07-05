@@ -76,6 +76,17 @@ const teacherMenu: Array<Menu | string> = [
     pathname: "/teacher-dashboard",
     title: "Home",
   },
+  "COURSE MANAGEMENT",
+  {
+    icon: "BookOpen",
+    pathname: "/teacher-courses",
+    title: "Course Management",
+  },
+  {
+    icon: "Users",
+    pathname: "/enrollment-management",
+    title: "Enrollment Management",
+  },
   "APPS",
   {
     icon: "MailOpen",

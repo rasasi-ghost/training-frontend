@@ -67,7 +67,7 @@ import ProfileOverviewStudent from "@/pages/ProfileOverviewStudent";
 import GradesStudent from "@/pages/GradesStudent";
 import TeacherDashboard from "@/pages/TeacherDashboard";
 import ProfileOverviewTeacher from "@/pages/ProfileOverviewTeacher";
-
+import TeacherEnrollmentManagement from '@/pages/TeacherEnrollmentManagement';
 function Router() {
   const routes = [
     {
@@ -126,6 +126,18 @@ function Router() {
                 {
                   path: "",
                   element: <DashboardOverview4 />,
+                },
+              ],
+            },
+
+            ,
+            {
+              path: "enrollment-management",
+              element: <ProtectedRoute />,
+              children: [
+                {
+                  path: "",
+                  element: <TeacherEnrollmentManagement />,
                 },
               ],
             },
