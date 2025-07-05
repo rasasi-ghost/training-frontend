@@ -96,7 +96,7 @@ const teacherMenu: Array<Menu | string> = [
   "PERSONAL DASHBOARD",
   {
     icon: "Presentation",
-    pathname: "/profile-overview",
+    pathname: "/teacher-profile",
     title: "Profile Overview",
   },
   "E-COMMERCE",

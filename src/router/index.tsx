@@ -66,6 +66,7 @@ import { UserRole } from "../types/user";
 import ProfileOverviewStudent from "@/pages/ProfileOverviewStudent";
 import GradesStudent from "@/pages/GradesStudent";
 import TeacherDashboard from "@/pages/TeacherDashboard";
+import ProfileOverviewTeacher from "@/pages/ProfileOverviewTeacher";
 
 function Router() {
   const routes = [
@@ -94,6 +95,17 @@ function Router() {
                 {
                   path: "",
                   element: <TeacherDashboard />,
+                },
+              ],
+            },
+            
+            {
+              path: "teacher-profile",
+              element: <ProtectedRoute  />,
+              children: [
+                {
+                  path: "",
+                  element: <ProfileOverviewTeacher />,
                 },
               ],
             },
