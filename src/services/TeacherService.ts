@@ -17,6 +17,7 @@ export interface Course {
   endDate: string;
   isActive: boolean;
   lectures?: Lecture[];
+  enrollmentCount?: number;
 }
 
 export interface Lecture {

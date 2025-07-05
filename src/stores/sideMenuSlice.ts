@@ -70,11 +70,11 @@ const adminMenu: Array<Menu | string> = [
 ];
 
 const teacherMenu: Array<Menu | string> = [
-  "s",
+  "My Dashboard",
   {
     icon: "Album",
-    pathname: "/dashboard-overview-3",
-    title: "Hospital",
+    pathname: "/teacher-dashboard",
+    title: "Home",
   },
   "APPS",
   {

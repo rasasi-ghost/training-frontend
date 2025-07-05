@@ -65,6 +65,7 @@ import ProtectedRoute from "../components/ProtectedRoute";
 import { UserRole } from "../types/user";
 import ProfileOverviewStudent from "@/pages/ProfileOverviewStudent";
 import GradesStudent from "@/pages/GradesStudent";
+import TeacherDashboard from "@/pages/TeacherDashboard";
 
 function Router() {
   const routes = [
@@ -87,12 +88,12 @@ function Router() {
               ],
             },
             {
-              path: "dashboard-overview-2",
-              element: <ProtectedRoute allowedRoles={[UserRole.Teacher]} />,
+              path: "teacher-dashboard",
+              element: <ProtectedRoute  />,
               children: [
                 {
                   path: "",
-                  element: <DashboardOverview2 />,
+                  element: <TeacherDashboard />,
                 },
               ],
             },

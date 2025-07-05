@@ -4,10 +4,15 @@ import Button from "@/components/Base/Button";
 import Lucide from "@/components/Base/Lucide";
 import { FormInput, FormLabel, FormTextarea, FormSwitch } from "@/components/Base/Form";
 import { TeacherCourseController } from "@/controllers";
-import { Course, CreateCourseRequest, UpdateCourseRequest } from "@/services/TeacherService";
+import { Course as BaseCourse, CreateCourseRequest, UpdateCourseRequest } from "@/services/TeacherService";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
+
+// Extend the Course type to include enrollmentCount
+interface Course extends BaseCourse {
+  enrollmentCount?: number;
+}
 
 interface CourseFormModalProps {
   open: boolean;

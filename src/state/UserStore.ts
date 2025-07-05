@@ -28,7 +28,8 @@ class UserStore {
   setUser(user: User | null) {
     this.currentUser = user;
     this.isAuthenticated = !!user;
-    
+    console.log(user)
+
     if (user) {
       LocalStorageService.setUser(user);
     } else {
@@ -75,8 +76,10 @@ class UserStore {
   }
 
   get dashboardRoute(): string {
+    console.log("Current user role:", this.isTeacher);
+
     if (this.isAdmin) return "/dashboard-overview-1";
-    if (this.isTeacher) return "/dashboard-overview-2";
+    if (this.isTeacher) return "/teacher-dashboard";
     if (this.isStudent) return "/dashboard-overview-7";
     return "/login";
   }

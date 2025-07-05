@@ -94,6 +94,7 @@ const TeacherDashboard: React.FC = observer(() => {
   useEffect(() => {
     const loadData = async () => {
       setLoading(true);
+      console.log("Loading teacher dashboard data...");
       try {
         // Check approval status
         const approvalResult = await TeacherCourseController.checkApprovalStatus();
