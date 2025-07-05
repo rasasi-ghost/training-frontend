@@ -8,6 +8,7 @@ import { LectureRequest } from "@/services/TeacherService";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
+import ConfirmationModal from "./ConfirmationModal";
 
 interface LectureFormModalProps {
   open: boolean;
@@ -51,6 +52,11 @@ const LectureFormModal: React.FC<LectureFormModalProps> = ({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const isEdit = !!lecture;
+  const [showConfirmation, setShowConfirmation] = useState(false);
+  const [confirmationMessage, setConfirmationMessage] = useState({
+    title: "",
+    message: ""
+  });
 
   // Initialize form with react-hook-form
   const { register, handleSubmit, reset, formState: { errors } } = useForm<LectureFormValues>({
@@ -100,7 +106,13 @@ const LectureFormModal: React.FC<LectureFormModalProps> = ({
       }
       
       if (result.success) {
-        onSuccess();
+        setConfirmationMessage({
+          title: isEdit ? "Lecture Updated" : "Lecture Added",
+          message: isEdit 
+            ? `The lecture "${data.title}" has been successfully updated.`
+            : `A new lecture "${data.title}" has been successfully added to your course.`
+        });
+        setShowConfirmation(true);
       } else {
         setError(result.error || "Failed to save lecture");
       }
@@ -112,131 +124,148 @@ const LectureFormModal: React.FC<LectureFormModalProps> = ({
     }
   };
 
+  const handleConfirmationClose = () => {
+    setShowConfirmation(false);
+    onSuccess();
+  };
+
   return (
-    <Dialog
-      size="lg"
-      open={open}
-      onClose={() => {
-        if (!loading) onClose();
-      }}
-    >
-      <Dialog.Panel>
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <Dialog.Title>
-            <h2 className="mr-auto text-base font-medium">
-              {isEdit ? "Edit Lecture" : "Add Lecture"}
-            </h2>
-          </Dialog.Title>
-          <Dialog.Description>
-            <div className="grid grid-cols-12 gap-4 gap-y-3">
-              {error && (
-                <div className="col-span-12">
-                  <div className="px-4 py-3 text-sm text-white rounded-md bg-danger">
-                    {error}
+    <>
+      <Dialog
+        size="lg"
+        open={open}
+        onClose={() => {
+          if (!loading) onClose();
+        }}
+      >
+        <Dialog.Panel>
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <Dialog.Title>
+              <h2 className="mr-auto text-base font-medium">
+                {isEdit ? "Edit Lecture" : "Add Lecture"}
+              </h2>
+            </Dialog.Title>
+            <Dialog.Description>
+              <div className="grid grid-cols-12 gap-4 gap-y-3">
+                {error && (
+                  <div className="col-span-12">
+                    <div className="px-4 py-3 text-sm text-white rounded-md bg-danger">
+                      {error}
+                    </div>
                   </div>
+                )}
+                
+                <div className="col-span-12">
+                  <FormLabel htmlFor="title">Lecture Title</FormLabel>
+                  <FormInput
+                    id="title"
+                    type="text"
+                    placeholder="Enter lecture title"
+                    className={errors.title ? "border-danger" : ""}
+                    {...register("title")}
+                  />
+                  {errors.title && (
+                    <div className="mt-1 text-danger text-sm">{errors.title.message}</div>
+                  )}
                 </div>
-              )}
-              
-              <div className="col-span-12">
-                <FormLabel htmlFor="title">Lecture Title</FormLabel>
-                <FormInput
-                  id="title"
-                  type="text"
-                  placeholder="Enter lecture title"
-                  className={errors.title ? "border-danger" : ""}
-                  {...register("title")}
-                />
-                {errors.title && (
-                  <div className="mt-1 text-danger text-sm">{errors.title.message}</div>
-                )}
-              </div>
 
-              <div className="col-span-12">
-                <FormLabel htmlFor="description">Lecture Description</FormLabel>
-                <FormTextarea
-                  id="description"
-                  placeholder="Enter lecture description"
-                  className={`min-h-[80px] ${errors.description ? "border-danger" : ""}`}
-                  {...register("description")}
-                />
-                {errors.description && (
-                  <div className="mt-1 text-danger text-sm">{errors.description.message}</div>
-                )}
-              </div>
+                <div className="col-span-12">
+                  <FormLabel htmlFor="description">Lecture Description</FormLabel>
+                  <FormTextarea
+                    id="description"
+                    placeholder="Enter lecture description"
+                    className={`min-h-[80px] ${errors.description ? "border-danger" : ""}`}
+                    {...register("description")}
+                  />
+                  {errors.description && (
+                    <div className="mt-1 text-danger text-sm">{errors.description.message}</div>
+                  )}
+                </div>
 
-              <div className="col-span-12 sm:col-span-6">
-                <FormLabel htmlFor="startTime">Start Time</FormLabel>
-                <FormInput
-                  id="startTime"
-                  type="datetime-local"
-                  className={errors.startTime ? "border-danger" : ""}
-                  {...register("startTime")}
-                />
-                {errors.startTime && (
-                  <div className="mt-1 text-danger text-sm">{errors.startTime.message}</div>
-                )}
-              </div>
+                <div className="col-span-12 sm:col-span-6">
+                  <FormLabel htmlFor="startTime">Start Time</FormLabel>
+                  <FormInput
+                    id="startTime"
+                    type="datetime-local"
+                    className={errors.startTime ? "border-danger" : ""}
+                    {...register("startTime")}
+                  />
+                  {errors.startTime && (
+                    <div className="mt-1 text-danger text-sm">{errors.startTime.message}</div>
+                  )}
+                </div>
 
-              <div className="col-span-12 sm:col-span-6">
-                <FormLabel htmlFor="endTime">End Time</FormLabel>
-                <FormInput
-                  id="endTime"
-                  type="datetime-local"
-                  className={errors.endTime ? "border-danger" : ""}
-                  {...register("endTime")}
-                />
-                {errors.endTime && (
-                  <div className="mt-1 text-danger text-sm">{errors.endTime.message}</div>
-                )}
-              </div>
+                <div className="col-span-12 sm:col-span-6">
+                  <FormLabel htmlFor="endTime">End Time</FormLabel>
+                  <FormInput
+                    id="endTime"
+                    type="datetime-local"
+                    className={errors.endTime ? "border-danger" : ""}
+                    {...register("endTime")}
+                  />
+                  {errors.endTime && (
+                    <div className="mt-1 text-danger text-sm">{errors.endTime.message}</div>
+                  )}
+                </div>
 
-              <div className="col-span-12">
-                <FormLabel htmlFor="location">Location</FormLabel>
-                <FormInput
-                  id="location"
-                  type="text"
-                  placeholder="Enter lecture location"
-                  className={errors.location ? "border-danger" : ""}
-                  {...register("location")}
-                />
-                {errors.location && (
-                  <div className="mt-1 text-danger text-sm">{errors.location.message}</div>
-                )}
+                <div className="col-span-12">
+                  <FormLabel htmlFor="location">Location</FormLabel>
+                  <FormInput
+                    id="location"
+                    type="text"
+                    placeholder="Enter lecture location"
+                    className={errors.location ? "border-danger" : ""}
+                    {...register("location")}
+                  />
+                  {errors.location && (
+                    <div className="mt-1 text-danger text-sm">{errors.location.message}</div>
+                  )}
+                </div>
               </div>
-            </div>
-          </Dialog.Description>
-          <Dialog.Footer>
-            <Button
-              type="button"
-              variant="outline-secondary"
-              onClick={onClose}
-              className="w-20 mr-1"
-              disabled={loading}
-            >
-              Cancel
-            </Button>
-            <Button
-              variant="primary"
-              type="submit"
-              className="w-auto"
-              disabled={loading}
-            >
-              {loading ? (
-                <>
-                  <div className="w-4 h-4 mr-2 border-2 border-t-transparent border-white rounded-full animate-spin"></div>
-                  {isEdit ? "Updating..." : "Adding..."}
-                </>
-              ) : (
-                <>
-                  <Lucide icon={isEdit ? "Save" : "Plus"} className="w-4 h-4 mr-2" />
-                  {isEdit ? "Save Changes" : "Add Lecture"}
-                </>
-              )}
-            </Button>
-          </Dialog.Footer>
-        </form>
-      </Dialog.Panel>
-    </Dialog>
+            </Dialog.Description>
+            <Dialog.Footer>
+              <Button
+                type="button"
+                variant="outline-secondary"
+                onClick={onClose}
+                className="w-20 mr-1"
+                disabled={loading}
+              >
+                Cancel
+              </Button>
+              <Button
+                variant="primary"
+                type="submit"
+                className="w-auto"
+                disabled={loading}
+              >
+                {loading ? (
+                  <>
+                    <div className="w-4 h-4 mr-2 border-2 border-t-transparent border-white rounded-full animate-spin"></div>
+                    {isEdit ? "Updating..." : "Adding..."}
+                  </>
+                ) : (
+                  <>
+                    <Lucide icon={isEdit ? "Save" : "Plus"} className="w-4 h-4 mr-2" />
+                    {isEdit ? "Save Changes" : "Add Lecture"}
+                  </>
+                )}
+              </Button>
+            </Dialog.Footer>
+          </form>
+        </Dialog.Panel>
+      </Dialog>
+
+      {/* Confirmation Modal */}
+      <ConfirmationModal
+        open={showConfirmation}
+        onClose={handleConfirmationClose}
+        title={confirmationMessage.title}
+        message={confirmationMessage.message}
+        icon="CheckCircle"
+        iconColor="text-success"
+      />
+    </>
   );
 };
 

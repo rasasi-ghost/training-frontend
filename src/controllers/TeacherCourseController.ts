@@ -128,6 +128,21 @@ class TeacherCourseController {
     }
   }
 
+  async getCourseLectures(courseId: string) {
+    try {
+      const response = await TeacherService.getCourseLectures(courseId);
+      return {
+        success: true,
+        lectures: response.data.lectures
+      };
+    } catch (error: any) {
+      return {
+        success: false,
+        error: error.response?.data?.message || "Failed to load lectures"
+      };
+    }
+  }
+
   // Enrollment operations
   async getCourseEnrollments(courseId: string) {
     try {

@@ -8,6 +8,7 @@ import { Course as BaseCourse, CreateCourseRequest, UpdateCourseRequest } from "
 import { useForm, SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
+import ConfirmationModal from "./ConfirmationModal";
 
 // Extend the Course type to include enrollmentCount
 interface Course extends BaseCourse {
@@ -55,6 +56,12 @@ const CourseFormModal: React.FC<CourseFormModalProps> = ({
 }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showConfirmation, setShowConfirmation] = useState(false);
+  const [successfulCourse, setSuccessfulCourse] = useState<Course | null>(null);
+  const [confirmationMessage, setConfirmationMessage] = useState({
+    title: "",
+    message: ""
+  });
 
   // Initialize form with react-hook-form
   const { register, handleSubmit, reset, formState: { errors } } = useForm<CourseFormValues>({
@@ -114,7 +121,12 @@ const CourseFormModal: React.FC<CourseFormModalProps> = ({
           // Get updated course data
           const courseResult = await TeacherCourseController.getCourseDetails(course.id);
           if (courseResult.success && courseResult.course) {
-            onSuccess(courseResult.course);
+            setSuccessfulCourse(courseResult.course);
+            setConfirmationMessage({
+              title: "Course Updated",
+              message: `Your course "${data.title}" has been successfully updated.`
+            });
+            setShowConfirmation(true);
           }
         } else {
           setError(result.error || "Failed to update course");
@@ -134,7 +146,12 @@ const CourseFormModal: React.FC<CourseFormModalProps> = ({
           // Get new course data
           const courseResult = await TeacherCourseController.getCourseDetails(result.courseId);
           if (courseResult.success && courseResult.course) {
-            onSuccess(courseResult.course);
+            setSuccessfulCourse(courseResult.course);
+            setConfirmationMessage({
+              title: "Course Created",
+              message: `Your new course "${data.title}" has been successfully created.`
+            });
+            setShowConfirmation(true);
           }
         } else {
           setError(result.error || "Failed to create course");
@@ -148,146 +165,165 @@ const CourseFormModal: React.FC<CourseFormModalProps> = ({
     }
   };
 
+  const handleConfirmationClose = () => {
+    setShowConfirmation(false);
+    if (successfulCourse) {
+      onSuccess(successfulCourse);
+    }
+  };
+
   return (
-    <Dialog
-      size="lg"
-      open={open}
-      onClose={() => {
-        if (!loading) onClose();
-      }}
-    >
-      <Dialog.Panel>
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <Dialog.Title>
-            <h2 className="mr-auto text-base font-medium">
-              {isEdit ? "Edit Course" : "Create New Course"}
-            </h2>
-          </Dialog.Title>
-          <Dialog.Description>
-            <div className="grid grid-cols-12 gap-4 gap-y-3">
-              {error && (
+    <>
+      <Dialog
+        size="lg"
+        open={open}
+        onClose={() => {
+          if (!loading) onClose();
+        }}
+      >
+        <Dialog.Panel>
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <Dialog.Title>
+              <h2 className="mr-auto text-base font-medium">
+                {isEdit ? "Edit Course" : "Create New Course"}
+              </h2>
+            </Dialog.Title>
+            <Dialog.Description>
+              <div className="grid grid-cols-12 gap-4 gap-y-3">
+                {error && (
+                  <div className="col-span-12">
+                    <div className="px-4 py-3 text-sm text-white rounded-md bg-danger">
+                      {error}
+                    </div>
+                  </div>
+                )}
+                
                 <div className="col-span-12">
-                  <div className="px-4 py-3 text-sm text-white rounded-md bg-danger">
-                    {error}
-                  </div>
+                  <FormLabel htmlFor="title">Course Title</FormLabel>
+                  <FormInput
+                    id="title"
+                    type="text"
+                    placeholder="Enter course title"
+                    className={errors.title ? "border-danger" : ""}
+                    {...register("title")}
+                  />
+                  {errors.title && (
+                    <div className="mt-1 text-danger text-sm">{errors.title.message}</div>
+                  )}
                 </div>
-              )}
-              
-              <div className="col-span-12">
-                <FormLabel htmlFor="title">Course Title</FormLabel>
-                <FormInput
-                  id="title"
-                  type="text"
-                  placeholder="Enter course title"
-                  className={errors.title ? "border-danger" : ""}
-                  {...register("title")}
-                />
-                {errors.title && (
-                  <div className="mt-1 text-danger text-sm">{errors.title.message}</div>
-                )}
-              </div>
 
-              <div className="col-span-12">
-                <FormLabel htmlFor="description">Course Description</FormLabel>
-                <FormTextarea
-                  id="description"
-                  placeholder="Enter course description"
-                  className={`min-h-[100px] ${errors.description ? "border-danger" : ""}`}
-                  {...register("description")}
-                />
-                {errors.description && (
-                  <div className="mt-1 text-danger text-sm">{errors.description.message}</div>
-                )}
-              </div>
+                <div className="col-span-12">
+                  <FormLabel htmlFor="description">Course Description</FormLabel>
+                  <FormTextarea
+                    id="description"
+                    placeholder="Enter course description"
+                    className={`min-h-[100px] ${errors.description ? "border-danger" : ""}`}
+                    {...register("description")}
+                  />
+                  {errors.description && (
+                    <div className="mt-1 text-danger text-sm">{errors.description.message}</div>
+                  )}
+                </div>
 
-              <div className="col-span-12 sm:col-span-6">
-                <FormLabel htmlFor="maxEnrollment">Maximum Enrollment</FormLabel>
-                <FormInput
-                  id="maxEnrollment"
-                  type="number"
-                  min="1"
-                  className={errors.maxEnrollment ? "border-danger" : ""}
-                  {...register("maxEnrollment", { valueAsNumber: true })}
-                />
-                {errors.maxEnrollment && (
-                  <div className="mt-1 text-danger text-sm">{errors.maxEnrollment.message}</div>
-                )}
-              </div>
-              
-              <div className="col-span-12 sm:col-span-6">
-                {isEdit && (
-                  <div className="mt-6">
-                    <FormSwitch>
-                      <FormSwitch.Label htmlFor="isActive" className="mr-2">Active Status</FormSwitch.Label>
-                      <FormSwitch.Input
-                        id="isActive"
-                        type="checkbox"
-                        {...register("isActive")}
-                      />
-                    </FormSwitch>
-                  </div>
-                )}
-              </div>
+                <div className="col-span-12 sm:col-span-6">
+                  <FormLabel htmlFor="maxEnrollment">Maximum Enrollment</FormLabel>
+                  <FormInput
+                    id="maxEnrollment"
+                    type="number"
+                    min="1"
+                    className={errors.maxEnrollment ? "border-danger" : ""}
+                    {...register("maxEnrollment", { valueAsNumber: true })}
+                  />
+                  {errors.maxEnrollment && (
+                    <div className="mt-1 text-danger text-sm">{errors.maxEnrollment.message}</div>
+                  )}
+                </div>
+                
+                <div className="col-span-12 sm:col-span-6">
+                  {isEdit && (
+                    <div className="mt-6">
+                      <FormSwitch>
+                        <FormSwitch.Label htmlFor="isActive" className="mr-2">Active Status</FormSwitch.Label>
+                        <FormSwitch.Input
+                          id="isActive"
+                          type="checkbox"
+                          {...register("isActive")}
+                        />
+                      </FormSwitch>
+                    </div>
+                  )}
+                </div>
 
-              <div className="col-span-12 sm:col-span-6">
-                <FormLabel htmlFor="startDate">Start Date</FormLabel>
-                <FormInput
-                  id="startDate"
-                  type="date"
-                  className={errors.startDate ? "border-danger" : ""}
-                  {...register("startDate")}
-                />
-                {errors.startDate && (
-                  <div className="mt-1 text-danger text-sm">{errors.startDate.message}</div>
-                )}
-              </div>
+                <div className="col-span-12 sm:col-span-6">
+                  <FormLabel htmlFor="startDate">Start Date</FormLabel>
+                  <FormInput
+                    id="startDate"
+                    type="date"
+                    className={errors.startDate ? "border-danger" : ""}
+                    {...register("startDate")}
+                  />
+                  {errors.startDate && (
+                    <div className="mt-1 text-danger text-sm">{errors.startDate.message}</div>
+                  )}
+                </div>
 
-              <div className="col-span-12 sm:col-span-6">
-                <FormLabel htmlFor="endDate">End Date</FormLabel>
-                <FormInput
-                  id="endDate"
-                  type="date"
-                  className={errors.endDate ? "border-danger" : ""}
-                  {...register("endDate")}
-                />
-                {errors.endDate && (
-                  <div className="mt-1 text-danger text-sm">{errors.endDate.message}</div>
-                )}
+                <div className="col-span-12 sm:col-span-6">
+                  <FormLabel htmlFor="endDate">End Date</FormLabel>
+                  <FormInput
+                    id="endDate"
+                    type="date"
+                    className={errors.endDate ? "border-danger" : ""}
+                    {...register("endDate")}
+                  />
+                  {errors.endDate && (
+                    <div className="mt-1 text-danger text-sm">{errors.endDate.message}</div>
+                  )}
+                </div>
               </div>
-            </div>
-          </Dialog.Description>
-          <Dialog.Footer>
-            <Button
-              type="button"
-              variant="outline-secondary"
-              onClick={onClose}
-              className="w-20 mr-1"
-              disabled={loading}
-            >
-              Cancel
-            </Button>
-            <Button
-              variant="primary"
-              type="submit"
-              className="w-auto"
-              disabled={loading}
-            >
-              {loading ? (
-                <>
-                  <div className="w-4 h-4 mr-2 border-2 border-t-transparent border-white rounded-full animate-spin"></div>
-                  {isEdit ? "Updating..." : "Creating..."}
-                </>
-              ) : (
-                <>
-                  <Lucide icon={isEdit ? "Save" : "Plus"} className="w-4 h-4 mr-2" />
-                  {isEdit ? "Save Changes" : "Create Course"}
-                </>
-              )}
-            </Button>
-          </Dialog.Footer>
-        </form>
-      </Dialog.Panel>
-    </Dialog>
+            </Dialog.Description>
+            <Dialog.Footer>
+              <Button
+                type="button"
+                variant="outline-secondary"
+                onClick={onClose}
+                className="w-20 mr-1"
+                disabled={loading}
+              >
+                Cancel
+              </Button>
+              <Button
+                variant="primary"
+                type="submit"
+                className="w-auto"
+                disabled={loading}
+              >
+                {loading ? (
+                  <>
+                    <div className="w-4 h-4 mr-2 border-2 border-t-transparent border-white rounded-full animate-spin"></div>
+                    {isEdit ? "Updating..." : "Creating..."}
+                  </>
+                ) : (
+                  <>
+                    <Lucide icon={isEdit ? "Save" : "Plus"} className="w-4 h-4 mr-2" />
+                    {isEdit ? "Save Changes" : "Create Course"}
+                  </>
+                )}
+              </Button>
+            </Dialog.Footer>
+          </form>
+        </Dialog.Panel>
+      </Dialog>
+
+      {/* Confirmation Modal */}
+      <ConfirmationModal
+        open={showConfirmation}
+        onClose={handleConfirmationClose}
+        title={confirmationMessage.title}
+        message={confirmationMessage.message}
+        icon="CheckCircle"
+        iconColor="text-success"
+      />
+    </>
   );
 };
 
