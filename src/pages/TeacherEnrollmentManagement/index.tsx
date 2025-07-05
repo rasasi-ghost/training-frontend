@@ -367,7 +367,7 @@ const TeacherDashboard: React.FC = observer(() => {
                       <Table.Td className="py-4 font-medium text-center border-t bg-slate-50 border-slate-200/60 text-slate-500 dark:bg-darkmode-400">
                         Status
                       </Table.Td>
-                      <Table.Td className="w-20 py-4 font-medium text-center border-t bg-slate-50 border-slate-200/60 text-slate-500 dark:bg-darkmode-400">
+                      <Table.Td className="py-4 font-medium text-center border-t bg-slate-50 border-slate-200/60 text-slate-500 dark:bg-darkmode-400">
                         Action
                       </Table.Td>
                     </Table.Tr>
@@ -445,60 +445,19 @@ const TeacherDashboard: React.FC = observer(() => {
                               </div>
                             </div>
                           </Table.Td>
-                          <Table.Td className="relative py-4 border-dashed dark:bg-darkmode-600">
-                            <div className="flex items-center justify-center">
-                              <Menu className="h-5">
-                                <Menu.Button className="w-5 h-5 text-slate-500">
-                                  <Lucide
-                                    icon="MoreVertical"
-                                    className="w-5 h-5 stroke-slate-400/70 fill-slate-400/70"
-                                  />
-                                </Menu.Button>
-                                <Menu.Items className="w-40">
-                                  <Menu.Item onClick={() => handleCourseSelect(course)}>
-                                    <Lucide
-                                      icon="Eye"
-                                      className="w-4 h-4 mr-2"
-                                    />{" "}
-                                    View Details
-                                  </Menu.Item>
-                                    <Menu.Item onClick={() => handleEditCourse(course)}>
-                                    <Lucide
-                                      icon="Pencil"
-                                      className="w-4 h-4 mr-2"
-                                    />{" "}
-                                    Edit Course
-                                    </Menu.Item>
-                                  <Menu.Item onClick={() => handleAddLecture(course)}>
-                                    <Lucide
-                                      icon="Plus"
-                                      className="w-4 h-4 mr-2"
-                                    />{" "}
-                                    Add Lecture
-                                  </Menu.Item>
-                                  <Menu.Item onClick={() => handleManageEnrollments(course)}>
-                                    <Lucide
-                                      icon="Users"
-                                      className="w-4 h-4 mr-2"
-                                    />{" "}
-                                    Manage Enrollments
-                                  </Menu.Item>
-                                  <Menu.Item onClick={async () => {
-                                    await TeacherCourseController.updateCourse(course.id, { isActive: !course.isActive });
-                                    const updatedCourses = courses.map(c =>
-                                      c.id === course.id ? { ...c, isActive: !c.isActive } : c
-                                    );
-                                    setCourses(updatedCourses);
-                                  }}>
-                                    <Lucide
-                                      icon={course.isActive ? "XCircle" : "CheckCircle"}
-                                      className="w-4 h-4 mr-2"
-                                    />
-                                    {course.isActive ? "Deactivate" : "Activate"}
-                                  </Menu.Item>
-                                </Menu.Items>
-                              </Menu>
-                            </div>
+                          <Table.Td className="py-4 text-center border-dashed dark:bg-darkmode-600">
+                            <Button
+                              variant="primary"
+                              size="sm"
+                              onClick={() => handleManageEnrollments(course)}
+                              className="w-full px-2"
+                            >
+                              <Lucide
+                                icon="Users"
+                                className="w-4 h-4 mr-1"
+                              />
+                              Manage Enrollment
+                            </Button>
                           </Table.Td>
                         </Table.Tr>
                       ))

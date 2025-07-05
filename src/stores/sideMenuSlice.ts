@@ -89,33 +89,17 @@ const teacherMenu: Array<Menu | string> = [
   },
   "APPS",
   {
-    icon: "MailOpen",
-    pathname: "/chat",
-    title: "Chat",
-  },
-  {
     icon: "CalendarRange",
     pathname: "/calendar",
     title: "Calendar",
   },
-  "UI WIDGETS",
-  {
-    icon: "Keyboard",
-    pathname: "/interactive",
-    title: "Interactive",
-  },
+  
   "PERSONAL DASHBOARD",
   {
     icon: "Presentation",
     pathname: "/teacher-profile",
     title: "Profile Overview",
-  },
-  "E-COMMERCE",
-  {
-    icon: "BookMarked",
-    pathname: "/categories",
-    title: "Categories",
-  },
+  }
   // More teacher-specific items...
 ];
 

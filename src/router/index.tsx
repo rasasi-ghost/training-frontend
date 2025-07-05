@@ -68,6 +68,7 @@ import GradesStudent from "@/pages/GradesStudent";
 import TeacherDashboard from "@/pages/TeacherDashboard";
 import ProfileOverviewTeacher from "@/pages/ProfileOverviewTeacher";
 import TeacherEnrollmentManagement from '@/pages/TeacherEnrollmentManagement';
+import TeacherCourseManagement from '@/pages/TeacherCourseManagement';
 function Router() {
   const routes = [
     {
@@ -142,6 +143,16 @@ function Router() {
               ],
             },
             {
+              path: "teacher-courses",
+              element: <ProtectedRoute />,
+              children: [
+                {
+                  path: "",
+                  element: <TeacherCourseManagement />,
+                },
+              ],
+            },
+            {
               path: "dashboard-overview-5",
               element: <ProtectedRoute />,
               children: [
@@ -181,6 +192,7 @@ function Router() {
                 },
               ],
             },
+            
             {
               path: "users",
               element: <ProtectedRoute allowedRoles={[UserRole.Admin]} />,
