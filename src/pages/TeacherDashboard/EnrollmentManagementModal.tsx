@@ -7,6 +7,7 @@ import Table from "@/components/Base/Table";
 import { TeacherCourseController } from "@/controllers";
 import { Enrollment } from "@/services/TeacherService";
 import ConfirmationModal from "./ConfirmationModal";
+import { icons } from "lucide-react";
 
 interface EnrollmentManagementModalProps {
   open: boolean;
@@ -34,7 +35,7 @@ const EnrollmentManagementModal: React.FC<EnrollmentManagementModalProps> = ({
   const [confirmationMessage, setConfirmationMessage] = useState({
     title: "",
     message: "",
-    icon: "CheckCircle",
+    icon : "CheckCircle",
     iconColor: "text-success"
   });
 

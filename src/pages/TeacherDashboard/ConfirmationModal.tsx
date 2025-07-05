@@ -2,13 +2,14 @@ import React from "react";
 import { Dialog } from "@/components/Base/Headless";
 import Button from "@/components/Base/Button";
 import Lucide from "@/components/Base/Lucide";
+import { icons } from "lucide-react";
 
 interface ConfirmationModalProps {
   open: boolean;
   onClose: () => void;
   title: string;
   message: string;
-  icon?: string;
+  icon?: keyof typeof icons;
   iconColor?: string;
   primaryButtonText?: string;
 }
