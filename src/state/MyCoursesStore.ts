@@ -19,12 +19,13 @@ export class MyCoursesStore {
   get pendingEnrollments(): Enrollment[] {
     var s = this.enrollments.filter(enrollment => enrollment.statusString === "Pending");
     // alert("Pending enrollments: " + s.length);
+
     return s ; 
   }
 
   get approvedEnrollments(): Enrollment[] {
     var s =  this.enrollments.filter(enrollment => enrollment.statusString === "Approved");
-    console.log(this.enrollments.at(0)?.statusString);
+    // console.log(this.enrollments.at(0)?.statusString);
     return s;
   }
 

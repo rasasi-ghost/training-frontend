@@ -19,7 +19,7 @@ export interface Enrollment {
   studentId: string;
   studentName: string;
   status: number, // 0: Pending, 1: Approved, 2: Completed
-  statusStringlog: string;
+  statusString: string;
   enrollmentDate: string;
   grade?: number;
 }

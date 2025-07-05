@@ -93,10 +93,12 @@ const StudentDashboard: React.FC = observer(() => {
 
   const isLoading = CoursesController.isLoading;
   const pendingCourses = CoursesController.pendingCourses;
+  const pendingEnrollment = CoursesController.pendingEnrollment;
+
   const approvedCourses = CoursesController.approvedCourses;
   const completedCourses = CoursesController.completedCourses;
   const availableCoursesCount = CoursesController.availableCoursesCount;
-  const allEnrolledCourses = [...pendingCourses, ...approvedCourses, ...completedCourses];
+  const allEnrolledCourses = [...pendingEnrollment, ...approvedCourses, ...completedCourses];
 
   const getRandomGrade = () => {
     return Math.floor(Math.random() * 30) + 70; // Random grade between 70-100
@@ -146,7 +148,7 @@ const StudentDashboard: React.FC = observer(() => {
             title="Pending"
             subtitle="Awaiting Approval"
             icon="Clock"
-            count={pendingCourses.length}
+            count={pendingEnrollment.length}
             status="Pending"
             loading={isLoading}
           />

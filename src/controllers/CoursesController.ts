@@ -1,6 +1,7 @@
 import { makeAutoObservable } from "mobx";
 import myCoursesStore, { MyCoursesStore } from "../state/MyCoursesStore";
 import { Course, Enrollment } from "../services/CourseService";
+import { Console } from "console";
 
 class CoursesController {
   constructor(private store: MyCoursesStore) {
@@ -14,8 +15,15 @@ class CoursesController {
   }
 
   get pendingCourses(): Course[] {
+    console.log(this.store.pendingCourses);
     return this.store.pendingCourses;
   }
+
+  get pendingEnrollment(): Enrollment[] {
+    console.log(this.store.pendingEnrollments);
+    return this.store.pendingEnrollments;
+  }
+
 
   get approvedCourses(): Course[] {
     return this.store.approvedCourses;
