@@ -19,11 +19,13 @@ import UserStore from "@/state/UserStore";
 const studentSchema = yup.object({
   displayName: yup.string().required("Full name is required").min(2, "Name must be at least 2 characters"),
   email: yup.string().required("Email is required").email("Please enter a valid email address"),
-  year: yup.number()
-    .transform(value => (isNaN(value) || value === null || value === undefined) ? undefined : value)
+  year: yup.string()
     .required("Study year is required")
-    .min(1, "Year must be at least 1")
-    .max(6, "Year cannot be more than 6"),
+    .test('is-number', 'Year must be between 1 and 6', value => {
+      if (!value) return false;
+      const numValue = parseInt(value);
+      return !isNaN(numValue) && numValue >= 1 && numValue <= 6;
+    }),
   password: yup.string().required("Password is required").min(6, "Password must be at least 6 characters"),
   confirmPassword: yup.string()
     .required("Please confirm your password")
@@ -57,11 +59,30 @@ function Main() {
   const {
     register: registerStudent,
     handleSubmit: handleStudentSubmit,
-    formState: { errors: studentErrors }
+    formState: { errors: studentErrors },
+    setValue: setStudentValue,
+    watch: watchStudent
   } = useForm({
     resolver: yupResolver(studentSchema),
-    mode: "onChange"
+    mode: "onChange",
+    defaultValues: {
+      displayName: "",
+      email: "",
+      year: "",
+      password: "",
+      confirmPassword: "",
+      agreeTerms: false
+    }
   });
+
+  // Watch the year field for debugging
+  const yearValue = watchStudent("year");
+  
+  // Handle year change explicitly
+  const handleYearChange = (e) => {
+    const value = e.target.value;
+    setStudentValue("year", value, { shouldValidate: true });
+  };
 
   // Teacher form setup
   const {
@@ -198,9 +219,10 @@ function Main() {
                   )}
                   
                   <FormLabel className="mt-5">Study Year*</FormLabel>
-                  <FormSelect
+                  <select
                     {...registerStudent("year")}
-                    className={clsx("block px-4 py-3.5 rounded-[0.6rem] border-slate-300/80", {
+                    onChange={handleYearChange}
+                    className={clsx("form-select block px-4 py-3.5 rounded-[0.6rem] border-slate-300/80 w-full", {
                       "border-danger": studentErrors.year
                     })}
                   >
@@ -211,7 +233,7 @@ function Main() {
                     <option value="4">Year 4</option>
                     <option value="5">Year 5</option>
                     <option value="6">Year 6</option>
-                  </FormSelect>
+                  </select>
                   {studentErrors.year && (
                     <div className="mt-2 text-danger text-sm">{studentErrors.year.message}</div>
                   )}
