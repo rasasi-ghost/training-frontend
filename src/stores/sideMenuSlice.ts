@@ -115,6 +115,12 @@ const studentMenu: Array<Menu | string> = [
     pathname: "/dashboard-overview-7",
     title: "Home",
   },
+
+  {
+    icon: "Medal",
+    pathname: "/grades-student",
+    title: "Grades",
+  },
   "APPS",
   {
     icon: "CalendarRange",
@@ -126,11 +132,6 @@ const studentMenu: Array<Menu | string> = [
     icon: "CalendarRange",
     pathname: "/profile-overview-student",
     title: "Profile",
-  },
-  {
-    icon: "Medal",
-    pathname: "/profile-overview?page=achievements",
-    title: "Achievements",
   },
   // More student-specific items...
 ];

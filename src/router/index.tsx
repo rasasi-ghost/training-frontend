@@ -64,6 +64,7 @@ import Layout from "../themes";
 import ProtectedRoute from "../components/ProtectedRoute";
 import { UserRole } from "../types/user";
 import ProfileOverviewStudent from "@/pages/ProfileOverviewStudent";
+import GradesStudent from "@/pages/GradesStudent";
 
 function Router() {
   const routes = [
@@ -182,6 +183,16 @@ function Router() {
                 {
                   path: "",
                   element: <AddUser />,
+                },
+              ],
+            },
+            {
+              path: "grades-student",
+              element: <ProtectedRoute />,
+              children: [
+                {
+                  path: "",
+                  element: <GradesStudent />,
                 },
               ],
             },
