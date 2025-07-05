@@ -69,7 +69,7 @@ import TeacherDashboard from "@/pages/TeacherDashboard";
 import ProfileOverviewTeacher from "@/pages/ProfileOverviewTeacher";
 import TeacherEnrollmentManagement from '@/pages/TeacherEnrollmentManagement';
 import TeacherCourseManagement from '@/pages/TeacherCourseManagement';
-
+import AdminUserManagementPage from "@/pages/AdminUserManagement";
 import AdminDashboard from "@/pages/AdminDashboard/AdminDashboard";
 function Router() {
   const routes = [
@@ -141,6 +141,17 @@ function Router() {
                 {
                   path: "",
                   element: <TeacherEnrollmentManagement />,
+                },
+              ],
+            },
+            ,
+            {
+              path: "user-management",
+              element: <ProtectedRoute />,
+              children: [
+                {
+                  path: "",
+                  element: <AdminUserManagementPage />,
                 },
               ],
             },

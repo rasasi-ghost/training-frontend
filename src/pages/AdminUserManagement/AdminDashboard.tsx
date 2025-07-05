@@ -1,13 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { observer } from "mobx-react-lite";
 import Lucide from "@/components/Base/Lucide";
-import { Tab } from "@/components/Base/Headless";
 import Button from "@/components/Base/Button";
 import UserManagementTab from "./UserManagementTab";
-import CourseManagementTab from "./CourseManagementTab";
-import SystemOverviewTab from "./SystemOverviewTab";
 import TeacherApprovalModal from './TeacherApprovalModal';
-import { UserRole } from "@/services/AdminService";
+import PendingTeacherRequestsTable from "./PendingTeacherRequestsTable";
+import { UserRole, Teacher } from "@/services/AdminService";
 import { useNavigate } from "react-router-dom";
 import { useStore } from "@/state/MobxStoreProvider";
 
@@ -42,7 +40,7 @@ function StatCard({
   colorClass?: string;
 }) {
   return (
-    <div className="flex flex-col col-span-12 p-5 sm:col-span-6 xl:col-span-3 box box--stacked">
+    <div className="flex flex-col col-span-12 p-5 sm:col-span-6 xl:col-span-4 box box--stacked">
       <div className="flex items-center">
         <div className={`w-[54px] h-[54px] p-0.5 border border-${colorClass.split('-')[1]}/80 rounded-full bg-slate-50 cursor-pointer`}>
           <div className="w-full h-full p-1 bg-white border rounded-full border-slate-300/70">
@@ -82,6 +80,7 @@ const AdminDashboard: React.FC = observer(() => {
   const { adminUsecasesStore } = useStore();
   const [loading, setLoading] = useState(true);
   const [showTeacherApproval, setShowTeacherApproval] = useState(false);
+  const [selectedTeacher, setSelectedTeacher] = useState<Teacher | null>(null);
 
   // Load data
   useEffect(() => {
@@ -111,7 +110,7 @@ const AdminDashboard: React.FC = observer(() => {
       <div className="col-span-12">
         <div className="flex flex-col md:h-10 gap-y-3 md:items-center md:flex-row">
           <div className="text-base font-medium group-[.mode--light]:text-white">
-            Admin Dashboard
+            User Management
           </div>
         </div>
 
@@ -182,54 +181,65 @@ const AdminDashboard: React.FC = observer(() => {
             </Button>
           </div>
 
-          {/* Tabs for different management sections */}
-          <Tab.Group>
-            <Tab.List variant="boxed-tabs">
-              <Tab>
-                <Tab.Button className="w-full py-2" as="button">
-                  <Lucide icon="BarChart2" className="w-4 h-4 mr-2" />
-                  Overview
-                </Tab.Button>
-              </Tab>
-              <Tab>
-                <Tab.Button className="w-full py-2" as="button">
-                  <Lucide icon="Users" className="w-4 h-4 mr-2" />
-                  Users
-                </Tab.Button>
-              </Tab>
-              <Tab>
-                <Tab.Button className="w-full py-2" as="button">
-                  <Lucide icon="BookOpen" className="w-4 h-4 mr-2" />
-                  Courses
-                </Tab.Button>
-              </Tab>
-            </Tab.List>
-            <Tab.Panels className="mt-5">
-              <Tab.Panel className="leading-relaxed">
-                <SystemOverviewTab />
-              </Tab.Panel>
-              <Tab.Panel className="leading-relaxed">
-                <UserManagementTab />
-              </Tab.Panel>
-              <Tab.Panel className="leading-relaxed">
-                <CourseManagementTab />
-              </Tab.Panel>
-            </Tab.Panels>
-          </Tab.Group>
+          {/* Pending Teacher Requests Table Section */}
+          {pendingTeacherCount > 0 && (
+            <div className="col-span-12">
+              <div className="flex items-center h-10 intro-y">
+                <h2 className="mr-5 text-lg font-medium truncate">Pending Teacher Requests</h2>
+              </div>
+              <div className="p-5 mt-5 box box--stacked">
+                <PendingTeacherRequestsTable
+                  pendingTeachers={adminUsecasesStore.pendingTeachers}
+                  loading={loading}
+                  onApprove={async (teacherId) => {
+                    await adminUsecasesStore.approveTeacher(teacherId);
+                  }}
+                  onReject={async (teacherId) => {
+                    await adminUsecasesStore.rejectTeacher(teacherId);
+                  }}
+                  onViewDetails={(teacher) => {
+                    setSelectedTeacher(teacher);
+                    setShowTeacherApproval(true);
+                  }}
+                />
+              </div>
+            </div>
+          )}
+
+          {/* User Management Content */}
+          <div className="col-span-12">
+            <div className="flex items-center h-10 intro-y">
+              <h2 className="mr-5 text-lg font-medium truncate">All Users</h2>
+            </div>
+            <div className="mt-5">
+              <UserManagementTab />
+            </div>
+          </div>
         </div>
       </div>
 
       {/* Teacher Approval Modal */}
       <TeacherApprovalModal
         open={showTeacherApproval}
-        onClose={() => setShowTeacherApproval(false)}
-        pendingTeachers={adminUsecasesStore.pendingTeachers}
+        onClose={() => {
+          setShowTeacherApproval(false);
+          setSelectedTeacher(null);
+        }}
+        pendingTeachers={selectedTeacher ? [selectedTeacher] : adminUsecasesStore.pendingTeachers}
         loading={adminUsecasesStore.loading}
         onApprove={async (teacherId) => {
           await adminUsecasesStore.approveTeacher(teacherId);
+          if (selectedTeacher) {
+            setShowTeacherApproval(false);
+            setSelectedTeacher(null);
+          }
         }}
-        onReject={async (teacherId, reason) => {
+        onReject={async (teacherId) => {
           await adminUsecasesStore.rejectTeacher(teacherId);
+          if (selectedTeacher) {
+            setShowTeacherApproval(false);
+            setSelectedTeacher(null);
+          }
         }}
       />
     </div>

@@ -20,17 +20,12 @@ const adminMenu: Array<Menu | string> = [
   {
     icon: "GaugeCircle",
     pathname: "/admin-dashboard",
-    title: "E-Commerce",
-  },
-  {
-    icon: "ActivitySquare",
-    pathname: "/dashboard-overview-2",
-    title: "CRM",
+    title: "Home",
   },
   "USER MANAGEMENT",
   {
     icon: "SquareUser",
-    pathname: "/users",
+    pathname: "/user-management",
     title: "Users",
   },
   {
