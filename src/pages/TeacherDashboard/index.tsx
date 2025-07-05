@@ -511,13 +511,13 @@ const TeacherDashboard: React.FC = observer(() => {
                                     />{" "}
                                     View Details
                                   </Menu.Item>
-                                  <Menu.Item onClick={() => handleEditCourse(course)}>
+                                    <Menu.Item onClick={() => handleEditCourse(course)}>
                                     <Lucide
-                                      icon="Edit"
+                                      icon="Pencil"
                                       className="w-4 h-4 mr-2"
                                     />{" "}
                                     Edit Course
-                                  </Menu.Item>
+                                    </Menu.Item>
                                   <Menu.Item onClick={() => handleAddLecture(course)}>
                                     <Lucide
                                       icon="Plus"

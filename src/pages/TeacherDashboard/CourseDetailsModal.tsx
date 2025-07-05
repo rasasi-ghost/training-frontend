@@ -231,7 +231,7 @@ const CourseDetailsModal: React.FC<CourseDetailsModalProps> = ({
             className="w-auto mr-1"
             onClick={onEdit}
           >
-            <Lucide icon="Edit" className="w-4 h-4 mr-2" />
+            {/* <Lucide icon="Edit" className="w-4 h-4 mr-2" /> */}
             Edit Course
           </Button>
           <Button
