@@ -153,34 +153,7 @@ const AdminDashboard: React.FC = observer(() => {
           </div>
 
           {/* Quick Action Buttons */}
-          <div className="flex flex-wrap gap-2">
-            <Button
-              variant="primary"
-              onClick={() => {
-                // This will signal the UserManagementTab to open the create user modal
-                adminUsecasesStore.openCreateUserModal = true;
-              }}
-              disabled={loading}
-            >
-              <Lucide icon="UserPlus" className="w-4 h-4 mr-2" />
-              Add New User
-            </Button>
-            
-            <Button
-              variant="outline-primary"
-              onClick={() => setShowTeacherApproval(true)}
-              disabled={loading}
-              className={pendingTeacherCount > 0 ? "relative" : ""}
-            >
-              <Lucide icon="CheckSquare" className="w-4 h-4 mr-2" />
-              Teacher Approvals
-              {pendingTeacherCount > 0 && (
-                <div className="absolute -top-2 -right-2 w-5 h-5 rounded-full bg-danger text-white text-xs flex items-center justify-center">
-                  {pendingTeacherCount}
-                </div>
-              )}
-            </Button>
-          </div>
+          
 
           {/* Tabs for different management sections */}
           <Tab.Group>

@@ -32,35 +32,7 @@ const adminMenu: Array<Menu | string> = [
     icon: "CakeSlice",
     pathname: "/admin-pending-teachers",
     title: "Pending Requests",
-  },
-  {
-    icon: "PackagePlus",
-    pathname: "/add-user",
-    title: "Add User",
-  },
-  "APPS",
-  {
-    icon: "GanttChartSquare",
-    pathname: "/inbox",
-    title: "Inbox",
-    badge: 4,
-  },
-  {
-    icon: "PanelRightClose",
-    pathname: "/file-manager-list",
-    title: "File Manager List",
-  },
-  "GENERAL SETTINGS",
-  {
-    icon: "Briefcase",
-    pathname: "/settings",
-    title: "Profile Info",
-  },
-  {
-    icon: "MailCheck",
-    pathname: "/settings?page=email-settings",
-    title: "Email Settings",
-  },
+  }
   // More admin-specific items...
 ];
 
