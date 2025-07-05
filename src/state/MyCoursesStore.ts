@@ -114,8 +114,9 @@ export class MyCoursesStore {
       await this.fetchEnrolledCourses();
       return true;
     } catch (error) {
+      console.log("Enrollment error:", error);
       runInAction(() => {
-        this.error = error instanceof Error ? error.message : "Failed to enroll in course";
+        this.error = error instanceof Error ? error.message : "You might be aleready enrolled in this course or the course is not available.";
       });
       return false;
     }

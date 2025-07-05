@@ -86,6 +86,7 @@ const StudentDashboard: React.FC = observer(() => {
   const [enrollingCourseId, setEnrollingCourseId] = useState<string | null>(null);
   const [isEnrolling, setIsEnrolling] = useState(false);
   const [enrollmentSuccess, setEnrollmentSuccess] = useState(false);
+  const [enrollmentError, setEnrollmentError] = useState<string | null>(null);
 
   useEffect(() => {
     CoursesController.loadDashboardData();
@@ -118,18 +119,35 @@ const StudentDashboard: React.FC = observer(() => {
     if (!enrollingCourseId) return;
 
     setIsEnrolling(true);
+    setEnrollmentError(null);
+    
     try {
-      const success = await CoursesController.enrollInCourse(enrollingCourseId);
-      if (success) {
+      const result = await CoursesController.enrollInCourse(enrollingCourseId);
+      
+      // Check if result is an object with an error property (error response)
+      if (typeof result === 'object' && result !== null && 'error' in result) {
+        setEnrollmentError(result || "Failed to enroll in course");
+      } else if (result === false) {
+        // Handle general failure
+        setEnrollmentError("You might be aleready enrolled in this course or the course is not available.");
+      } else {
+        // Success case
         setEnrollmentSuccess(true);
         setTimeout(() => {
           setShowEnrollConfirmation(false);
           setEnrollmentSuccess(false);
           setEnrollingCourseId(null);
+          setEnrollmentError(null);
         }, 3000);
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Enrollment failed", error);
+      // Try to extract error message from various error formats
+      const errorMessage = 
+        error?.response?.data?.error || 
+        error?.message || 
+        "An unexpected error occurred. Please try again.";
+      setEnrollmentError(errorMessage);
     } finally {
       setIsEnrolling(false);
     }
@@ -444,6 +462,7 @@ const StudentDashboard: React.FC = observer(() => {
             if (!isEnrolling && !enrollmentSuccess) {
               setShowEnrollConfirmation(false);
               setEnrollingCourseId(null);
+              setEnrollmentError(null);
             }
           }}
         >
@@ -457,6 +476,31 @@ const StudentDashboard: React.FC = observer(() => {
                 <div className="mt-5 text-2xl">Enrollment Successful!</div>
                 <div className="mt-2 text-slate-500">
                   Your enrollment request has been submitted and is pending approval.
+                </div>
+              </div>
+            ) : enrollmentError ? (
+              <div className="p-5 text-center">
+                <Lucide
+                  icon="AlertCircle"
+                  className="w-16 h-16 mx-auto mt-3 text-danger"
+                />
+                <div className="mt-5 text-2xl">Enrollment Failed</div>
+                <div className="mt-2 text-slate-500">
+                  {enrollmentError}
+                </div>
+                <div className="px-5 pb-8 text-center mt-5">
+                  <Button
+                    type="button"
+                    variant="outline-secondary"
+                    onClick={() => {
+                      setShowEnrollConfirmation(false);
+                      setEnrollingCourseId(null);
+                      setEnrollmentError(null);
+                    }}
+                    className="w-24"
+                  >
+                    Close
+                  </Button>
                 </div>
               </div>
             ) : (
