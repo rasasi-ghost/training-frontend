@@ -142,72 +142,15 @@ const AdminDashboard: React.FC = observer(() => {
   return (
     <div className="grid grid-cols-12 gap-y-10 gap-x-6">
       <div className="col-span-12">
-        <div className="flex flex-col md:h-10 gap-y-3 md:items-center md:flex-row">
-          <div className="text-base font-medium group-[.mode--light]:text-white">
-            User Management
-          </div>
-        </div>
+        
 
         {/* Statistics Cards */}
         <div className="flex flex-col gap-8 mt-3.5">
-          <div className="grid grid-cols-12 gap-5">
-            <StatCard
-              title="Total Users"
-              subtitle="All Users"
-              icon="Users"
-              count={adminUsecasesStore.users.length}
-              loading={loading}
-              colorClass="text-primary"
-            />
-            <StatCard
-              title="Admins"
-              subtitle="System Administrators"
-              icon="Shield"
-              count={adminCount}
-              loading={loading}
-              colorClass="text-danger"
-            />
-            <StatCard
-              title="Teachers"
-              subtitle="Course Instructors"
-              icon="GraduationCap"
-              count={teacherCount}
-              loading={loading}
-              colorClass="text-success"
-            />
-            <StatCard
-              title="Students"
-              subtitle="Enrolled Students"
-              icon="BookOpen"
-              count={studentCount}
-              loading={loading}
-              colorClass="text-warning"
-            />
-          </div>
+          
+          
 
           {/* Quick Action Buttons */}
-          <div className="flex flex-wrap gap-2">
-            <Button
-              variant="primary"
-              onClick={() => {
-                // This will signal the UserManagementTab to open the create user modal
-                adminUsecasesStore.openCreateUserModal = true;
-              }}
-              disabled={loading}
-            >
-              <Lucide icon="UserPlus" className="w-4 h-4 mr-2" />
-              Add New User
-            </Button>
-            
-            <Button
-              variant="outline-primary"
-              onClick={loadData}
-              disabled={loading}
-            >
-              <Lucide icon="RefreshCw" className="w-4 h-4 mr-2" />
-              Refresh Data
-            </Button>
-          </div>
+        
 
           {/* Pending Teacher Requests Table */}
           <div className="col-span-12">
@@ -315,14 +258,7 @@ const AdminDashboard: React.FC = observer(() => {
           </div>
 
           {/* User Management Content */}
-          <div className="col-span-12">
-            <div className="flex items-center h-10 intro-y">
-              <h2 className="mr-5 text-lg font-medium truncate">All Users</h2>
-            </div>
-            <div className="mt-5">
-              <UserManagementTab />
-            </div>
-          </div>
+         
         </div>
       </div>
 

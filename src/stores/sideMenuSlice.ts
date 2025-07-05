@@ -30,8 +30,8 @@ const adminMenu: Array<Menu | string> = [
   },
   {
     icon: "CakeSlice",
-    pathname: "/departments",
-    title: "Departments",
+    pathname: "/admin-pending-teachers",
+    title: "Pending Requests",
   },
   {
     icon: "PackagePlus",

@@ -59,7 +59,7 @@ import Chart from "../pages/Chart";
 import Slider from "../pages/Slider";
 import ImageZoom from "../pages/ImageZoom";
 import LandingPage from "../pages/LandingPage";
-
+import AdminPendingTeachers from "../pages/AdminPendingTeachers";
 import Layout from "../themes";
 import ProtectedRoute from "../components/ProtectedRoute";
 import { UserRole } from "../types/user";
@@ -133,6 +133,16 @@ function Router() {
               ],
             },
 
+            {
+              path: "admin-pending-teachers",
+              element: <ProtectedRoute />,
+              children: [
+                {
+                  path: "",
+                  element: <AdminPendingTeachers />,
+                },
+              ],
+            },
             ,
             {
               path: "enrollment-management",
