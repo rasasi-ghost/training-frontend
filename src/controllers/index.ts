@@ -1,13 +1,16 @@
 import UserController from './UserController';
 import CoursesController from './CoursesController';
+import TeacherCourseController from './TeacherCourseController';
 
 export {
   UserController,
-  CoursesController
+  CoursesController,
+  TeacherCourseController
 };
 
 // Default export for easy importing
 export default {
   UserController,
-  CoursesController
+  CoursesController,
+  TeacherCourseController
 };
