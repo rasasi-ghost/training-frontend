@@ -60,7 +60,7 @@ const Main = observer(() => {
         >
           <div className="relative z-10 flex flex-col justify-center w-full h-full py-2 lg:py-32">
             {/* Logo section */}
-            <div className="rounded-[0.8rem] w-[55px] h-[55px] border border-primary/30 flex items-center justify-center">
+            {/* <div className="rounded-[0.8rem] w-[55px] h-[55px] border border-primary/30 flex items-center justify-center">
               <div className="relative flex items-center justify-center w-[50px] rounded-[0.6rem] h-[50px] bg-gradient-to-b from-theme-1/90 to-theme-2/90 bg-white">
                 <div className="w-[26px] h-[26px] relative -rotate-45 [&_div]:bg-white">
                   <div className="absolute w-[20%] left-0 inset-y-0 my-auto rounded-full opacity-50 h-[75%]"></div>
@@ -68,7 +68,7 @@ const Main = observer(() => {
                   <div className="absolute w-[20%] right-0 inset-y-0 my-auto rounded-full opacity-50 h-[75%]"></div>
                 </div>
               </div>
-            </div>
+            </div> */}
 
             <div className="mt-10">
               <div className="text-2xl font-medium">Sign In</div>
@@ -119,8 +119,7 @@ const Main = observer(() => {
                       />
                     </div>
                     <div className="ml-1 mr-8">
-                      Welcome to <span className="font-medium">Tailwise</span>{" "}
-                      demo! Enter your credentials to access your dashboard.
+                      Welcome, Enter your credentials to access your dashboard.
                     </div>
                     <Alert.DismissButton
                       type="button"
@@ -154,7 +153,7 @@ const Main = observer(() => {
                     onChange={(e) => setPassword(e.target.value)}
                     required
                   />
-                  <div className="flex mt-4 text-xs text-slate-500 sm:text-sm">
+                  {/* <div className="flex mt-4 text-xs text-slate-500 sm:text-sm">
                     <div className="flex items-center mr-auto">
                       <FormCheck.Input
                         id="remember-me"
@@ -169,7 +168,7 @@ const Main = observer(() => {
                       </label>
                     </div>
                     <a href="">Forgot Password?</a>
-                  </div>
+                  </div> */}
                   <div className="mt-5 text-center xl:mt-8 xl:text-left">
                     <Button
                       variant="primary"
