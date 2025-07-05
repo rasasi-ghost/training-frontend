@@ -172,7 +172,7 @@ function Main() {
               </div>
             </div>
             <div className="mt-10">
-              <div className="text-2xl font-medium">Sign Up</div>
+              <div className="text-2xl font-medium">Join Alarkkan Training Center</div>
               <div className="mt-2.5 text-slate-600 dark:text-slate-400">
                 Already have an account?{" "}
                 <a className="font-medium text-primary" href="/login">
@@ -192,7 +192,7 @@ function Main() {
                   className={`px-4 py-2 font-medium ${registrationType === "teacher" ? 'text-primary border-b-2 border-primary' : 'text-slate-500'}`}
                   onClick={() => setRegistrationType("teacher")}
                 >
-                  Teacher
+                  Instructor
                 </button>
               </div>
               
@@ -450,7 +450,7 @@ function Main() {
                       className="bg-gradient-to-r from-theme-1/70 to-theme-2/70 w-full py-3.5 xl:mr-3 dark:border-darkmode-400"
                       disabled={UserStore.loading || isSubmitting}
                     >
-                      {UserStore.loading || isSubmitting ? "Registering..." : "Register as Teacher"}
+                      {UserStore.loading || isSubmitting ? "Registering..." : "Register as Instructor"}
                     </Button>
                   </div>
                   
@@ -514,12 +514,12 @@ function Main() {
         >
           <div className="sticky top-0 z-10 flex-col justify-center hidden h-screen ml-16 lg:flex xl:ml-28 2xl:ml-36">
             <div className="leading-[1.4] text-[2.6rem] xl:text-5xl font-medium xl:leading-[1.2] text-white">
-              Join Our Learning Platform <br /> Start Your Educational Journey
+              Alarkkan Training Center <br /> Empowering Skills for Success
             </div>
             <div className="mt-5 text-base leading-relaxed xl:text-lg text-white/70">
-              Register today to access premium courses, interact with expert educators,
-              and enhance your learning experience. Whether you're a student looking to learn
-              or a teacher sharing knowledge, we welcome you to our community.
+              Join Alarkkan Training Center to access quality professional courses and development opportunities. 
+              Whether you're a student seeking to enhance your skills or an instructor sharing expertise, 
+              our platform provides the tools and resources you need to succeed.
             </div>
             <div className="flex flex-col gap-3 mt-10 xl:items-center xl:flex-row">
               <div className="flex items-center">
@@ -561,7 +561,7 @@ function Main() {
                 </div>
               </div>
               <div className="text-base xl:ml-2 2xl:ml-3 text-white/70">
-                Join thousands of students and teachers in our growing community!
+                Join thousands of professionals in our growing training community!
               </div>
             </div>
           </div>
