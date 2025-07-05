@@ -14,12 +14,11 @@ import UserStore from "@/state/UserStore";
 import { useAppDispatch, useAppSelector } from "@/stores/hooks";
 import { setRole } from "@/stores/sideMenuSlice";
 
-
 const Main = observer(() => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
-  const { loading, error,  } = UserStore;
+  const { loading, error } = UserStore;
   const dispatch = useAppDispatch();
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -27,24 +26,22 @@ const Main = observer(() => {
 
     try {
       await UserController.login(email, password);
-      // Navigate to the appropriate dashboard based on user role
-      console.log(UserStore.currentUser?.email)
-      // Map user role number to string representation
       const mapRoleToString = (roleId: any): "Admin" | "Teacher" | "Student" => {
-        switch(roleId) {
-          case 0: return 'Admin';
-          case 1: return 'Teacher';
-          case 2: return 'Student';
-          default: return 'Admin'; // Default to Admin as a fallback
+        switch (roleId) {
+          case 0:
+            return "Admin";
+          case 1:
+            return "Teacher";
+          case 2:
+            return "Student";
+          default:
+            return "Admin";
         }
       };
-      
-      console.log(`User role: ${mapRoleToString(UserStore.userRole!)}`);
+
       dispatch(setRole(mapRoleToString(UserStore.userRole!)));
-      
       navigate(UserController.getRedirectPathForRole());
     } catch (err) {
-      // Error is already handled by the controller and set in the store
       console.error("Login error:", err);
     }
   };
@@ -59,19 +56,8 @@ const Main = observer(() => {
           ])}
         >
           <div className="relative z-10 flex flex-col justify-center w-full h-full py-2 lg:py-32">
-            {/* Logo section */}
-            {/* <div className="rounded-[0.8rem] w-[55px] h-[55px] border border-primary/30 flex items-center justify-center">
-              <div className="relative flex items-center justify-center w-[50px] rounded-[0.6rem] h-[50px] bg-gradient-to-b from-theme-1/90 to-theme-2/90 bg-white">
-                <div className="w-[26px] h-[26px] relative -rotate-45 [&_div]:bg-white">
-                  <div className="absolute w-[20%] left-0 inset-y-0 my-auto rounded-full opacity-50 h-[75%]"></div>
-                  <div className="absolute w-[20%] inset-0 m-auto h-[120%] rounded-full"></div>
-                  <div className="absolute w-[20%] right-0 inset-y-0 my-auto rounded-full opacity-50 h-[75%]"></div>
-                </div>
-              </div>
-            </div> */}
-
             <div className="mt-10">
-              <div className="text-2xl font-medium">Sign In</div>
+              <div className="text-2xl font-medium">Welcome to Alarkkan Training Center</div>
               <div className="mt-2.5 text-slate-600 dark:text-slate-400">
                 Don't have an account?{" "}
                 <Link className="font-medium text-primary" to="/register">
@@ -119,7 +105,7 @@ const Main = observer(() => {
                       />
                     </div>
                     <div className="ml-1 mr-8">
-                      Welcome, Enter your credentials to access your dashboard.
+                      Sign in to access your Alarkkan Training Center courses and resources.
                     </div>
                     <Alert.DismissButton
                       type="button"
@@ -153,22 +139,6 @@ const Main = observer(() => {
                     onChange={(e) => setPassword(e.target.value)}
                     required
                   />
-                  {/* <div className="flex mt-4 text-xs text-slate-500 sm:text-sm">
-                    <div className="flex items-center mr-auto">
-                      <FormCheck.Input
-                        id="remember-me"
-                        type="checkbox"
-                        className="mr-2.5 border"
-                      />
-                      <label
-                        className="cursor-pointer select-none"
-                        htmlFor="remember-me"
-                      >
-                        Remember me
-                      </label>
-                    </div>
-                    <a href="">Forgot Password?</a>
-                  </div> */}
                   <div className="mt-5 text-center xl:mt-8 xl:text-left">
                     <Button
                       variant="primary"
@@ -196,7 +166,6 @@ const Main = observer(() => {
         </div>
       </div>
 
-      {/* Background visuals */}
       <div className="fixed container grid w-screen inset-0 h-screen grid-cols-12 lg:max-w-[1550px] 2xl:max-w-[1750px] pl-14 pr-12 xl:px-24">
         <div
           className={clsx([
@@ -214,13 +183,12 @@ const Main = observer(() => {
         >
           <div className="sticky top-0 z-10 flex-col justify-center hidden h-screen ml-16 lg:flex xl:ml-28 2xl:ml-36">
             <div className="leading-[1.4] text-[2.6rem] xl:text-5xl font-medium xl:leading-[1.2] text-white">
-              Embrace Excellence <br /> in Dashboard Development
+              Alarkkan Training Center <br /> Excellence in Professional Development
             </div>
             <div className="mt-5 text-base leading-relaxed xl:text-lg text-white/70">
-              Unlock the potential of Tailwise, where developers craft
-              meticulously structured, visually stunning dashboards with
-              feature-rich modules. Join us today to shape the future of your
-              application development.
+              Alarkkan Training Center offers comprehensive training programs designed to enhance
+              your professional skills and career prospects. Our platform provides access to expert
+              instructors, quality resources, and a supportive learning environment to help you succeed.
             </div>
             <div className="flex flex-col gap-3 mt-10 xl:items-center xl:flex-row">
               <div className="flex items-center">
@@ -262,7 +230,7 @@ const Main = observer(() => {
                 </div>
               </div>
               <div className="text-base xl:ml-2 2xl:ml-3 text-white/70">
-                Over 7k+ strong and growing! Your journey begins here.
+                Join our community of professionals committed to continuous growth and learning.
               </div>
             </div>
           </div>
