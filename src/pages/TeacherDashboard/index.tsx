@@ -27,45 +27,62 @@ interface ExtendedCourse extends Course {
   enrollmentCount?: number;
 }
 
-function StatusCard({
+function CourseStatCard({
   title,
-  count,
+  subtitle,
   icon,
+  count,
   status,
   loading = false,
-  colorClass = "text-primary",
-  onClick
+  colorClass = "text-primary"
 }: {
   title: string;
-  count: number;
+  subtitle: string;
   icon: string;
+  count: number;
   status?: string;
   loading?: boolean;
   colorClass?: string;
-  onClick?: () => void;
 }) {
   return (
-    <div 
-      className="col-span-12 md:col-span-6 xl:col-span-3 p-5 border border-dashed rounded-[0.6rem] border-slate-300/80 box shadow-sm cursor-pointer hover:bg-slate-50 transition-colors duration-300"
-      onClick={onClick}
-    >
-      <div className="text-base text-slate-500">{title}</div>
-      {loading ? (
-        <div className="mt-1.5 h-8 w-24 bg-slate-200 animate-pulse rounded"></div>
-      ) : (
-        <div className="mt-1.5 text-2xl font-medium">{count}</div>
-      )}
-      <div className="absolute inset-y-0 right-0 flex flex-col justify-center mr-5">
-        <div className={`flex items-center ${colorClass}`}>
-          <Lucide
-            icon={icon}
-            className="w-12 h-12 ml-px stroke-[1] opacity-20"
-          />
-        </div>
-        {status && (
-          <div className="mt-2 text-xs font-medium px-2 py-1 rounded-full bg-primary/10 text-primary text-center">
-            {status}
+    <div className="flex flex-col col-span-12 p-5 sm:col-span-6 xl:col-span-3 box box--stacked">
+      <div className="flex items-center">
+        <div className={`w-[54px] h-[54px] p-0.5 border border-${colorClass.split('-')[1]}/80 rounded-full bg-slate-50 cursor-pointer`}>
+          <div className="w-full h-full p-1 bg-white border rounded-full border-slate-300/70">
+            <Lucide icon={icon} className={`w-full h-full ${colorClass}`} />
           </div>
+        </div>
+        <div className="ml-4">
+          <div className={`-mt-0.5 text-lg font-medium ${colorClass}`}>
+            {title}
+          </div>
+          <div className="mt-0.5 text-slate-500">{subtitle}</div>
+        </div>
+      </div>
+      <div className="px-4 py-2.5 mt-16 border border-dashed rounded-[0.6rem] border-slate-300/80 box shadow-sm">
+        {loading ? (
+          <div className="flex flex-col gap-2">
+            <div className="h-6 bg-slate-200 animate-pulse rounded w-16"></div>
+            <div className="h-4 bg-slate-200 animate-pulse rounded w-24"></div>
+          </div>
+        ) : (
+          <>
+            <div className="flex items-center">
+              <div className="text-xl font-medium leading-tight">{count}</div>
+              {status && (
+                <div className={`ml-2.5 px-2 py-0.5 rounded text-xs font-medium ${
+                  status === "Active" ? "bg-success/20 text-success" : 
+                  status === "Pending" ? "bg-warning/20 text-warning" : 
+                  "bg-primary/20 text-primary"
+                }`}>
+                  {status}
+                </div>
+              )}
+            </div>
+            <div className="mt-1 text-base text-slate-500">
+              {subtitle}
+            </div>
+          </>
         )}
       </div>
     </div>
@@ -101,7 +118,7 @@ const TeacherDashboard: React.FC = observer(() => {
         if (approvalResult.success) {
           setApprovalStatus(approvalResult.status || TeacherApprovalStatus.Pending);
           setApprovalMessage(approvalResult.message || "");
-          
+
           // If approved, load courses
           if (approvalResult.status === TeacherApprovalStatus.Approved) {
             const coursesResult = await TeacherCourseController.getTeacherCourses();
@@ -127,7 +144,7 @@ const TeacherDashboard: React.FC = observer(() => {
   const handleCourseSelect = async (course: ExtendedCourse) => {
     setSelectedCourse(course);
     setShowCourseDetails(true);
-    
+
     try {
       const result = await TeacherCourseController.getCourseEnrollments(course.id);
       if (result.success && result.enrollments) {
@@ -176,9 +193,9 @@ const TeacherDashboard: React.FC = observer(() => {
   // Filter courses by search term
   const filteredCourses = searchTerm
     ? courses.filter(course =>
-        course.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        course.description.toLowerCase().includes(searchTerm.toLowerCase())
-      )
+      course.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      course.description.toLowerCase().includes(searchTerm.toLowerCase())
+    )
     : courses;
 
   // Pagination
@@ -237,57 +254,64 @@ const TeacherDashboard: React.FC = observer(() => {
           <div className="text-base font-medium group-[.mode--light]:text-white">
             Teacher Dashboard
           </div>
-          <div className="flex flex-col sm:flex-row gap-x-3 gap-y-2 md:ml-auto">
-            <Button
-              variant="primary"
-              className="group-[.mode--light]:!bg-white/[0.12] group-[.mode--light]:!text-slate-200 group-[.mode--light]:!border-transparent"
-              onClick={handleCreateCourse}
-              disabled={loading || approvalStatus !== TeacherApprovalStatus.Approved}
-            >
-              <Lucide icon="PlusCircle" className="stroke-[1.3] w-4 h-4 mr-2" />{" "}
-              Create New Course
-            </Button>
-          </div>
         </div>
-        
+
         {/* Statistics Cards */}
         <div className="flex flex-col gap-8 mt-3.5">
-          <div className="flex flex-col p-5 box box--stacked">
-            <div className="grid grid-cols-4 gap-5">
-              <StatusCard
-                title="Total Courses"
-                count={courses.length}
-                icon="BookOpen"
-                loading={loading}
-                colorClass="text-primary"
-              />
-              <StatusCard
-                title="Active Courses"
-                count={activeCourses}
-                icon="CheckCircle"
-                status="Active"
-                loading={loading}
-                colorClass="text-success"
-              />
-              <StatusCard
-                title="Inactive Courses"
-                count={inactiveCourses}
-                icon="XCircle"
-                loading={loading}
-                colorClass="text-danger"
-              />
-              <StatusCard
-                title="Total Enrollments"
-                count={totalEnrollments}
-                icon="Users"
-                loading={loading}
-                colorClass="text-warning"
-              />
+          <div className="grid grid-cols-12 gap-5">
+            <CourseStatCard
+              title="Total Courses"
+              subtitle="All Your Courses"
+              icon="BookOpen"
+              count={courses.length}
+              loading={loading}
+              colorClass="text-primary"
+            />
+            <CourseStatCard
+              title="Active Courses"
+              subtitle="Currently Running"
+              icon="CheckCircle"
+              count={activeCourses}
+              status="Active"
+              loading={loading}
+              colorClass="text-success"
+            />
+            <CourseStatCard
+              title="Inactive Courses"
+              subtitle="Not Currently Active"
+              icon="XCircle"
+              count={inactiveCourses}
+              loading={loading}
+              colorClass="text-danger"
+            />
+            <CourseStatCard
+              title="Total Enrollments"
+              subtitle="All Student Enrollments"
+              icon="Users"
+              count={totalEnrollments}
+              loading={loading}
+              colorClass="text-warning"
+            />
+          </div>
+          <div className="flex flex-col md:h-10 gap-y-3 md:items-center md:flex-row">
+            <div className="text-base font-medium group-[.mode--light]:text-white">
+              My Courses
+            </div>
+            <div className="flex flex-col sm:flex-row gap-x-3 gap-y-2 md:ml-auto">
+              <Button
+                variant="primary"
+                className="group-[.mode--light]:!bg-white/[0.12] group-[.mode--light]:!text-slate-200 group-[.mode--light]:!border-transparent"
+                onClick={handleCreateCourse}
+                disabled={loading || approvalStatus !== TeacherApprovalStatus.Approved}
+              >
+                <Lucide icon="PlusCircle" className="stroke-[1.3] w-4 h-4 mr-2" />{" "}
+                Create New Course
+              </Button>
             </div>
           </div>
-          
           {/* Courses Table */}
           <div className="flex flex-col box box--stacked">
+
             <div className="flex flex-col p-5 sm:items-center sm:flex-row gap-y-2">
               <div>
                 <div className="relative">
@@ -340,7 +364,7 @@ const TeacherDashboard: React.FC = observer(() => {
                 </Menu>
               </div>
             </div>
-            
+
             {loading ? (
               // Shimmer loading effect for table
               <div className="overflow-auto xl:overflow-visible">
@@ -437,7 +461,7 @@ const TeacherDashboard: React.FC = observer(() => {
                               <div
                                 className={clsx([
                                   "first:rounded-l-sm last:rounded-r-sm border border-primary/20 -m-px bg-primary/40",
-                                  course.maxEnrollment > 0 
+                                  course.maxEnrollment > 0
                                     ? `w-[${Math.min(((course.enrollmentCount || 0) / course.maxEnrollment) * 100, 100)}%]`
                                     : "w-0"
                                 ])}
@@ -509,9 +533,9 @@ const TeacherDashboard: React.FC = observer(() => {
                                     Manage Enrollments
                                   </Menu.Item>
                                   <Menu.Item onClick={async () => {
-                                    await TeacherCourseController.updateCourse(course.id, {isActive: !course.isActive});
-                                    const updatedCourses = courses.map(c => 
-                                      c.id === course.id ? {...c, isActive: !c.isActive} : c
+                                    await TeacherCourseController.updateCourse(course.id, { isActive: !course.isActive });
+                                    const updatedCourses = courses.map(c =>
+                                      c.id === course.id ? { ...c, isActive: !c.isActive } : c
                                     );
                                     setCourses(updatedCourses);
                                   }}>
@@ -554,7 +578,7 @@ const TeacherDashboard: React.FC = observer(() => {
                 </Table>
               </div>
             )}
-            
+
             {/* Pagination */}
             {!loading && filteredCourses.length > 0 && (
               <div className="flex flex-col-reverse flex-wrap items-center p-5 flex-reverse gap-y-2 sm:flex-row">
@@ -596,7 +620,7 @@ const TeacherDashboard: React.FC = observer(() => {
                     <Lucide icon="ChevronsRight" className="w-4 h-4" />
                   </Pagination.Link>
                 </Pagination>
-                <FormSelect 
+                <FormSelect
                   className="sm:w-20 rounded-[0.5rem]"
                   value={itemsPerPage}
                   onChange={(e) => {
@@ -642,7 +666,7 @@ const TeacherDashboard: React.FC = observer(() => {
         onClose={() => setShowCourseForm(false)}
         course={isEditMode ? selectedCourse : null}
         isEdit={isEditMode}
-        onSuccess={(newCourse : any) => {
+        onSuccess={(newCourse: any) => {
           setShowCourseForm(false);
           if (isEditMode) {
             setCourses(
@@ -670,7 +694,7 @@ const TeacherDashboard: React.FC = observer(() => {
             TeacherCourseController.getCourseDetails(selectedCourse.id).then(res => {
               if (res.success && res.course) {
                 setSelectedCourse(res.course);
-                const updatedCourses = courses.map(c => 
+                const updatedCourses = courses.map(c =>
                   c.id === res.course?.id ? res.course : c
                 );
                 setCourses(updatedCourses);
