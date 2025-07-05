@@ -53,6 +53,7 @@ function Main() {
     title: "",
     message: ""
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
 
   // Student form setup
@@ -96,6 +97,7 @@ function Main() {
 
   // Handle student registration submission
   const onStudentSubmit = async (data) => {
+    setIsSubmitting(true);
     try {
       await UserController.registerStudent(
         data.email,
@@ -116,11 +118,14 @@ function Main() {
       }, 2000);
     } catch (error) {
       console.error("Student registration error:", error);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   // Handle teacher registration submission
   const onTeacherSubmit = async (data) => {
+    setIsSubmitting(true);
     try {
       await UserController.registerTeacher(
         data.email,
@@ -142,6 +147,8 @@ function Main() {
       }, 2000);
     } catch (error) {
       console.error("Teacher registration error:", error);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -306,9 +313,9 @@ function Main() {
                       type="submit"
                       rounded
                       className="bg-gradient-to-r from-theme-1/70 to-theme-2/70 w-full py-3.5 xl:mr-3 dark:border-darkmode-400"
-                      disabled={UserStore.loading}
+                      disabled={UserStore.loading || isSubmitting}
                     >
-                      {UserStore.loading ? "Registering..." : "Register as Student"}
+                      {UserStore.loading || isSubmitting ? "Registering..." : "Register as Student"}
                     </Button>
                   </div>
                   
@@ -441,9 +448,9 @@ function Main() {
                       type="submit"
                       rounded
                       className="bg-gradient-to-r from-theme-1/70 to-theme-2/70 w-full py-3.5 xl:mr-3 dark:border-darkmode-400"
-                      disabled={UserStore.loading}
+                      disabled={UserStore.loading || isSubmitting}
                     >
-                      {UserStore.loading ? "Registering..." : "Register as Teacher"}
+                      {UserStore.loading || isSubmitting ? "Registering..." : "Register as Teacher"}
                     </Button>
                   </div>
                   
