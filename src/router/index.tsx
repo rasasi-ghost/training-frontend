@@ -143,7 +143,6 @@ function Router() {
                 },
               ],
             },
-            ,
             {
               path: "enrollment-management",
               element: <ProtectedRoute />,
@@ -154,7 +153,6 @@ function Router() {
                 },
               ],
             },
-            ,
             {
               path: "user-management",
               element: <ProtectedRoute />,
@@ -736,5 +734,4 @@ function Router() {
 
   return useRoutes(routes);
 }
-
 export default Router;

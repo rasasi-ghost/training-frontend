@@ -99,7 +99,7 @@ const StudentDashboard: React.FC = observer(() => {
   const approvedCourses = CoursesController.approvedCourses;
   const completedCourses = CoursesController.completedCourses;
   const availableCoursesCount = CoursesController.availableCoursesCount;
-  const allEnrolledCourses = [...pendingEnrollment, ...approvedCourses, ...completedCourses];
+  const allEnrolledCourses = [...pendingCourses, ...approvedCourses, ...completedCourses];
 
   const getRandomGrade = () => {
     return Math.floor(Math.random() * 30) + 70; // Random grade between 70-100
