@@ -1,508 +1,703 @@
 import React, { useEffect, useState } from "react";
 import { observer } from "mobx-react-lite";
 import Lucide from "@/components/Base/Lucide";
-import { FormSelect, FormInput } from "@/components/Base/Form";
+import { Menu, Popover, Dialog } from "@/components/Base/Headless";
+import Pagination from "@/components/Base/Pagination";
+import { FormCheck, FormInput, FormSelect, FormTextarea, FormLabel } from "@/components/Base/Form";
 import Tippy from "@/components/Base/Tippy";
 import Button from "@/components/Base/Button";
-import { CoursesController } from "@/controllers";
-import { Menu, Dialog } from "@/components/Base/Headless";
 import Table from "@/components/Base/Table";
+import { TeacherCourseController } from "@/controllers";
 import clsx from "clsx";
 import CourseDetailsModal from "./CourseDetailsModal";
-
+import CourseFormModal from "./CourseFormModal";
+import LectureFormModal from './LectureFormModal';
+import EnrollmentManagementModal from "./EnrollmentManagementModal";
+import {
+  TeacherApprovalStatus,
+  Course,
+  Enrollment,
+  Lecture
+} from "@/services/TeacherService";
+import { useNavigate } from "react-router-dom";
 import _ from "lodash";
-import users from "@/fakers/users";
 
-function CourseCard({
+// Extend the Course interface to include enrollmentCount
+interface ExtendedCourse extends Course {
+  enrollmentCount?: number;
+}
+
+function StatusCard({
   title,
-  subtitle,
-  icon,
   count,
+  icon,
   status,
   loading = false,
-  grade = null
+  colorClass = "text-primary",
+  onClick
 }: {
   title: string;
-  subtitle: string;
-  icon: string;
   count: number;
-  status: string;
+  icon: string;
+  status?: string;
   loading?: boolean;
-  grade?: number | null;
+  colorClass?: string;
+  onClick?: () => void;
 }) {
   return (
-    <div className="flex flex-col col-span-12 p-5 sm:col-span-6 xl:col-span-3 box box--stacked">
-      <div className="flex items-center">
-        <div className="w-[54px] h-[54px] p-0.5 border border-primary/80 rounded-full bg-slate-50 cursor-pointer">
-          <div className="w-full h-full p-1 bg-white border rounded-full border-slate-300/70">
-            <Lucide icon={icon} className="w-full h-full" />
-          </div>
+    <div 
+      className="col-span-12 md:col-span-6 xl:col-span-3 p-5 border border-dashed rounded-[0.6rem] border-slate-300/80 box shadow-sm cursor-pointer hover:bg-slate-50 transition-colors duration-300"
+      onClick={onClick}
+    >
+      <div className="text-base text-slate-500">{title}</div>
+      {loading ? (
+        <div className="mt-1.5 h-8 w-24 bg-slate-200 animate-pulse rounded"></div>
+      ) : (
+        <div className="mt-1.5 text-2xl font-medium">{count}</div>
+      )}
+      <div className="absolute inset-y-0 right-0 flex flex-col justify-center mr-5">
+        <div className={`flex items-center ${colorClass}`}>
+          <Lucide
+            icon={icon}
+            className="w-12 h-12 ml-px stroke-[1] opacity-20"
+          />
         </div>
-        <div className="ml-4">
-          <div className="-mt-0.5 text-lg font-medium text-primary">
-            {title}
+        {status && (
+          <div className="mt-2 text-xs font-medium px-2 py-1 rounded-full bg-primary/10 text-primary text-center">
+            {status}
           </div>
-          <div className="mt-0.5 text-slate-500">{subtitle}</div>
-        </div>
-      </div>
-      <div className="px-4 py-2.5 mt-16 border border-dashed rounded-[0.6rem] border-slate-300/80 box shadow-sm">
-        {loading ? (
-          <div className="flex flex-col gap-2">
-            <div className="h-6 bg-slate-200 animate-pulse rounded w-16"></div>
-            <div className="h-4 bg-slate-200 animate-pulse rounded w-24"></div>
-          </div>
-        ) : (
-          <>
-            <div className="flex items-center">
-              <div className="text-xl font-medium leading-tight">{count}</div>
-              {grade !== null && (
-                <div className={`flex items-center ml-2.5 font-medium ${grade >= 70 ? 'text-success' : 'text-danger'}`}>
-                  Grade: {grade}%
-                </div>
-              )}
-              {status && (
-                <div className={`ml-2.5 px-2 py-0.5 rounded text-xs font-medium ${status === "Pending" ? "bg-warning/20 text-warning" :
-                  status === "Approved" ? "bg-success/20 text-success" :
-                    "bg-primary/20 text-primary"
-                  }`}>
-                  {status}
-                </div>
-              )}
-            </div>
-            <div className="mt-1 text-base text-slate-500">
-              {grade !== null ? "Completed Course" : status === "Pending" ? "Awaiting Approval" : "Active Course"}
-            </div>
-          </>
         )}
       </div>
     </div>
   );
 }
 
-const StudentDashboard: React.FC = observer(() => {
-  const [selectedCourse, setSelectedCourse] = useState<any>(null);
+const TeacherDashboard: React.FC = observer(() => {
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(true);
+  const [courses, setCourses] = useState<ExtendedCourse[]>([]);
+  const [selectedCourse, setSelectedCourse] = useState<ExtendedCourse | null>(null);
+  const [enrollments, setEnrollments] = useState<Enrollment[]>([]);
+  const [approvalStatus, setApprovalStatus] = useState<TeacherApprovalStatus>(TeacherApprovalStatus.Pending);
+  const [approvalMessage, setApprovalMessage] = useState("");
   const [showCourseDetails, setShowCourseDetails] = useState(false);
-  const [showEnrollConfirmation, setShowEnrollConfirmation] = useState(false);
-  const [enrollingCourseId, setEnrollingCourseId] = useState<string | null>(null);
-  const [isEnrolling, setIsEnrolling] = useState(false);
-  const [enrollmentSuccess, setEnrollmentSuccess] = useState(false);
+  const [showCourseForm, setShowCourseForm] = useState(false);
+  const [showLectureForm, setShowLectureForm] = useState(false);
+  const [showEnrollments, setShowEnrollments] = useState(false);
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [showApprovalMessage, setShowApprovalMessage] = useState(false);
 
+  // Load data
   useEffect(() => {
-    CoursesController.loadDashboardData();
+    const loadData = async () => {
+      setLoading(true);
+      try {
+        // Check approval status
+        const approvalResult = await TeacherCourseController.checkApprovalStatus();
+        if (approvalResult.success) {
+          setApprovalStatus(approvalResult.status || TeacherApprovalStatus.Pending);
+          setApprovalMessage(approvalResult.message || "");
+          
+          // If approved, load courses
+          if (approvalResult.status === TeacherApprovalStatus.Approved) {
+            const coursesResult = await TeacherCourseController.getTeacherCourses();
+            if (coursesResult.success && coursesResult.courses) {
+              setCourses(coursesResult.courses);
+            }
+          } else {
+            // Show approval message dialog if not approved
+            setShowApprovalMessage(true);
+          }
+        }
+      } catch (error) {
+        console.error("Failed to load data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadData();
   }, []);
 
-  const isLoading = CoursesController.isLoading;
-  const pendingCourses = CoursesController.pendingCourses;
-  const approvedCourses = CoursesController.approvedCourses;
-  const completedCourses = CoursesController.completedCourses;
-  const availableCoursesCount = CoursesController.availableCoursesCount;
-  const allEnrolledCourses = [...pendingCourses, ...approvedCourses, ...completedCourses];
-
-  const getRandomGrade = () => {
-    return Math.floor(Math.random() * 30) + 70; // Random grade between 70-100
-  };
-
-  const handleViewCourseDetails = (course: any) => {
+  // Handle course selection and load enrollments
+  const handleCourseSelect = async (course: ExtendedCourse) => {
     setSelectedCourse(course);
     setShowCourseDetails(true);
-  };
-
-  const handleEnrollCourse = (courseId: string) => {
-    setEnrollingCourseId(courseId);
-    setShowEnrollConfirmation(true);
-  };
-
-  const submitEnrollment = async () => {
-    if (!enrollingCourseId) return;
-
-    setIsEnrolling(true);
+    
     try {
-      const success = await CoursesController.enrollInCourse(enrollingCourseId);
-      if (success) {
-        setEnrollmentSuccess(true);
-        setTimeout(() => {
-          setShowEnrollConfirmation(false);
-          setEnrollmentSuccess(false);
-          setEnrollingCourseId(null);
-        }, 3000);
+      const result = await TeacherCourseController.getCourseEnrollments(course.id);
+      if (result.success && result.enrollments) {
+        setEnrollments(result.enrollments);
       }
     } catch (error) {
-      console.error("Enrollment failed", error);
-    } finally {
-      setIsEnrolling(false);
+      console.error("Failed to load enrollments:", error);
     }
   };
+
+  // Handle create new course
+  const handleCreateCourse = () => {
+    setIsEditMode(false);
+    setSelectedCourse(null);
+    setShowCourseForm(true);
+  };
+
+  // Handle edit course
+  const handleEditCourse = (course: ExtendedCourse) => {
+    setIsEditMode(true);
+    setSelectedCourse(course);
+    setShowCourseForm(true);
+  };
+
+  // Handle add lecture
+  const handleAddLecture = (course: ExtendedCourse) => {
+    setSelectedCourse(course);
+    setIsEditMode(false);
+    setShowLectureForm(true);
+  };
+
+  // Handle manage enrollments
+  const handleManageEnrollments = async (course: ExtendedCourse) => {
+    setSelectedCourse(course);
+    try {
+      const result = await TeacherCourseController.getCourseEnrollments(course.id);
+      if (result.success && result.enrollments) {
+        setEnrollments(result.enrollments);
+        setShowEnrollments(true);
+      }
+    } catch (error) {
+      console.error("Failed to load enrollments:", error);
+    }
+  };
+
+  // Filter courses by search term
+  const filteredCourses = searchTerm
+    ? courses.filter(course =>
+        course.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        course.description.toLowerCase().includes(searchTerm.toLowerCase())
+      )
+    : courses;
+
+  // Pagination
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentCourses = filteredCourses.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(filteredCourses.length / itemsPerPage);
+
+  // Course statistics
+  const activeCourses = courses.filter(course => course.isActive).length;
+  const inactiveCourses = courses.filter(course => !course.isActive).length;
+  const totalEnrollments = courses.reduce((total, course) => {
+    return total + (course.enrollmentCount || 0);
+  }, 0);
+
+  // If teacher is not approved, show message
+  if (approvalStatus !== TeacherApprovalStatus.Approved && !loading && showApprovalMessage) {
+    return (
+      <Dialog
+        open={showApprovalMessage}
+        onClose={() => setShowApprovalMessage(false)}
+        size="md"
+      >
+        <Dialog.Panel>
+          <div className="p-5 text-center">
+            <Lucide
+              icon={approvalStatus === TeacherApprovalStatus.Rejected ? "XCircle" : "Clock"}
+              className={`w-16 h-16 mx-auto mt-3 ${approvalStatus === TeacherApprovalStatus.Rejected ? "text-danger" : "text-warning"}`}
+            />
+            <div className="mt-5 text-2xl">
+              {approvalStatus === TeacherApprovalStatus.Rejected ? "Application Rejected" : "Approval Pending"}
+            </div>
+            <div className="mt-2 text-slate-500">
+              {approvalMessage || "Your teacher account is currently not approved. Please contact the administrator for more information."}
+            </div>
+          </div>
+          <div className="px-5 pb-8 text-center">
+            <Button
+              type="button"
+              variant="primary"
+              onClick={() => navigate("/dashboard")}
+              className="w-24"
+            >
+              Go to Dashboard
+            </Button>
+          </div>
+        </Dialog.Panel>
+      </Dialog>
+    );
+  }
 
   return (
     <div className="grid grid-cols-12 gap-y-10 gap-x-6">
       <div className="col-span-12">
-        <div className="flex items-center h-10">
+        <div className="flex flex-col md:h-10 gap-y-3 md:items-center md:flex-row">
           <div className="text-base font-medium group-[.mode--light]:text-white">
-            My Courses Dashboard
+            Teacher Dashboard
+          </div>
+          <div className="flex flex-col sm:flex-row gap-x-3 gap-y-2 md:ml-auto">
+            <Button
+              variant="primary"
+              className="group-[.mode--light]:!bg-white/[0.12] group-[.mode--light]:!text-slate-200 group-[.mode--light]:!border-transparent"
+              onClick={handleCreateCourse}
+              disabled={loading || approvalStatus !== TeacherApprovalStatus.Approved}
+            >
+              <Lucide icon="PlusCircle" className="stroke-[1.3] w-4 h-4 mr-2" />{" "}
+              Create New Course
+            </Button>
           </div>
         </div>
-        <div className="grid grid-cols-12 gap-5 mt-3.5">
-          <CourseCard
-            title="Pending"
-            subtitle="Awaiting Approval"
-            icon="Clock"
-            count={pendingCourses.length}
-            status="Pending"
-            loading={isLoading}
-          />
-          <CourseCard
-            title="Approved"
-            subtitle="Current Courses"
-            icon="CheckCircle"
-            count={approvedCourses.length}
-            status="Approved"
-            loading={isLoading}
-          />
-          <CourseCard
-            title="Completed"
-            subtitle="Finished Courses"
-            icon="Award"
-            count={completedCourses.length}
-            status="Completed"
-            loading={isLoading}
-            grade={completedCourses.length > 0 ? getRandomGrade() : null}
-          />
-          <CourseCard
-            title="Available"
-            subtitle="Courses to Enroll"
-            icon="BookOpen"
-            count={availableCoursesCount}
-            status=""
-            loading={isLoading}
-          />
-        </div>
-
-        <div className="flex items-center h-10 pt-5">
-          <div className="text-base font-medium group-[.mode--light]:text-white">
-            My Courses
-          </div>
-        </div>
-        <div className="mt-2 overflow-auto lg:overflow-visible">
-          {isLoading ? (
-            <div className="border-spacing-y-[10px] border-separate">
-              {[...Array(5)].map((_, index) => (
-                <div key={index} className="flex w-full mb-3">
-                  <div className="w-full h-24 box animate-pulse bg-slate-200 dark:bg-darkmode-400 rounded-[0.6rem]"></div>
-                </div>
-              ))}
+        
+        {/* Statistics Cards */}
+        <div className="flex flex-col gap-8 mt-3.5">
+          <div className="flex flex-col p-5 box box--stacked">
+            <div className="grid grid-cols-4 gap-5">
+              <StatusCard
+                title="Total Courses"
+                count={courses.length}
+                icon="BookOpen"
+                loading={loading}
+                colorClass="text-primary"
+              />
+              <StatusCard
+                title="Active Courses"
+                count={activeCourses}
+                icon="CheckCircle"
+                status="Active"
+                loading={loading}
+                colorClass="text-success"
+              />
+              <StatusCard
+                title="Inactive Courses"
+                count={inactiveCourses}
+                icon="XCircle"
+                loading={loading}
+                colorClass="text-danger"
+              />
+              <StatusCard
+                title="Total Enrollments"
+                count={totalEnrollments}
+                icon="Users"
+                loading={loading}
+                colorClass="text-warning"
+              />
             </div>
-          ) : (
-            <Table className="border-spacing-y-[10px] border-separate">
-              <Table.Tbody>
-                {allEnrolledCourses.length > 0 ? (
-                  allEnrolledCourses.map((course) => {
-                    const enrollment = CoursesController.getEnrollmentForCourse(course.id);
-                    const status = enrollment?.statusString || "Unknown";
-
-                    return (
-                      <Table.Tr key={course.id}>
-                        <Table.Td className="box shadow-[5px_3px_5px_#00000005] first:border-l last:border-r first:rounded-l-[0.6rem] last:rounded-r-[0.6rem] rounded-l-none rounded-r-none border-x-0 dark:bg-darkmode-600">
-                          <div className="flex items-center">
-                            <Lucide
-                              icon="BookOpen"
-                              className="w-6 h-6 text-theme-1 fill-primary/10 stroke-[0.8]"
-                            />
-                            <div className="ml-3.5">
-                              <a href="#" onClick={(e) => {
-                                e.preventDefault();
-                                handleViewCourseDetails(course);
-                              }} className="font-medium whitespace-nowrap">
-                                {course.title}
-                              </a>
-                              <div className="mt-1 text-xs text-slate-500 whitespace-nowrap">
-                                {course.credits} Credits
-                              </div>
-                            </div>
-                          </div>
-                        </Table.Td>
-                        <Table.Td className="w-60 box shadow-[5px_3px_5px_#00000005] first:border-l last:border-r first:rounded-l-[0.6rem] last:rounded-r-[0.6rem] rounded-l-none rounded-r-none border-x-0 dark:bg-darkmode-600">
-                          <div className="mb-1 text-xs text-slate-500 whitespace-nowrap">
-                            Instructor
-                          </div>
-                          <div className="flex items-center">
-                            <Lucide
-                              icon="User"
-                              className="w-3.5 h-3.5 stroke-[1.7] text-slate-500 mr-1.5"
-                            />
-                            <div className="whitespace-nowrap">
-                              {course.instructorName}
-                            </div>
-                          </div>
-                        </Table.Td>
-                        <Table.Td className="w-44 box shadow-[5px_3px_5px_#00000005] first:border-l last:border-r first:rounded-l-[0.6rem] last:rounded-r-[0.6rem] rounded-l-none rounded-r-none border-x-0 dark:bg-darkmode-600">
-                          <div className="mb-1 text-xs text-slate-500 whitespace-nowrap">
-                            Status
-                          </div>
-                          <div className={`flex items-center ${
-                            status === "Approved" ? "text-success" : 
-                            status === "Pending" ? "text-warning" : 
-                            status === "Completed" ? "text-primary" : ""
-                          }`}>
-                            <Lucide
-                              icon={
-                                status === "Approved" ? "CheckCircle" : 
-                                status === "Pending" ? "Clock" :
-                                status === "Completed" ? "Award" : "Info"
-                              }
-                              className="w-3.5 h-3.5 stroke-[1.7]"
-                            />
-                            <div className="ml-1.5 whitespace-nowrap">
-                              {status}
-                            </div>
-                          </div>
-                        </Table.Td>
-                        <Table.Td className="w-44 box shadow-[5px_3px_5px_#00000005] first:border-l last:border-r first:rounded-l-[0.6rem] last:rounded-r-[0.6rem] rounded-l-none rounded-r-none border-x-0 dark:bg-darkmode-600">
-                          <div className="mb-1 text-xs text-slate-500 whitespace-nowrap">
-                            Start Date
-                          </div>
-                          <div className="whitespace-nowrap">{course.startDate?.substring(0, 10) || "N/A"}</div>
-                        </Table.Td>
-                        <Table.Td className="w-44 box shadow-[5px_3px_5px_#00000005] first:border-l last:border-r first:rounded-l-[0.6rem] last:rounded-r-[0.6rem] rounded-l-none rounded-r-none border-x-0 dark:bg-darkmode-600">
-                          <div className="mb-1 text-xs text-slate-500 whitespace-nowrap">
-                            End Date
-                          </div>
-                          <div className="whitespace-nowrap">{course.endDate?.substring(0, 10) || "N/A"}</div>
-                        </Table.Td>
-                        <Table.Td className="w-20 relative py-0 box shadow-[5px_3px_5px_#00000005] first:border-l last:border-r first:rounded-l-[0.6rem] last:rounded-r-[0.6rem] rounded-l-none rounded-r-none border-x-0 dark:bg-darkmode-600">
-                          <div className="flex items-center justify-center">
-                            <Menu className="h-5">
-                              <Menu.Button className="w-5 h-5 text-slate-500">
-                                <Lucide
-                                  icon="MoreVertical"
-                                  className="w-5 h-5 stroke-slate-400/70 fill-slate-400/70"
-                                />
-                              </Menu.Button>
-                              <Menu.Items className="w-40">
-                                <Menu.Item onClick={() => handleViewCourseDetails(course)}>
-                                  <Lucide
-                                    icon="BookOpen"
-                                    className="w-4 h-4 mr-2"
-                                  />{" "}
-                                  View Details
-                                </Menu.Item>
-                                <Menu.Item>
-                                  <Lucide icon="MessageSquare" className="w-4 h-4 mr-2" />
-                                  Contact Instructor
-                                </Menu.Item>
-                                <Menu.Item>
-                                  <Lucide icon="FileText" className="w-4 h-4 mr-2" />
-                                  View Syllabus
-                                </Menu.Item>
-                              </Menu.Items>
-                            </Menu>
-                          </div>
-                        </Table.Td>
-                      </Table.Tr>
-                    );
-                  })
-                ) : (
-                  <Table.Tr>
-                    <Table.Td colSpan={6} className="text-center py-4 box shadow-[5px_3px_5px_#00000005] rounded-[0.6rem] dark:bg-darkmode-600">
-                      <div className="flex flex-col items-center">
-                        <Lucide icon="Search" className="w-16 h-16 text-slate-300 mb-2" />
-                        <p className="text-slate-500">No courses found</p>
-                        <Button variant="primary" className="mt-4">
-                          Browse Available Courses
-                        </Button>
-                      </div>
-                    </Table.Td>
-                  </Table.Tr>
-                )}
-              </Table.Tbody>
-            </Table>
-          )}
-        </div>
-
-        <div className="flex items-center h-10 pt-5 mt-5">
-          <div className="text-base font-medium group-[.mode--light]:text-white">
-            Available Courses
           </div>
-        </div>
-
-        <div id="mynewcomponent" className="grid grid-cols-12 gap-y-10 gap-x-6 mt-3.5">
-          {isLoading ? (
-            [...Array(6)].map((_, index) => (
-              <div key={index} className="flex flex-col col-span-12 md:col-span-6 xl:col-span-4 box box--stacked">
-                <div className="h-40 bg-slate-200 dark:bg-darkmode-400 rounded-t-[0.6rem] animate-pulse"></div>
-                <div className="p-5">
-                  <div className="h-6 bg-slate-200 dark:bg-darkmode-400 rounded mb-3 w-3/4 animate-pulse"></div>
-                  <div className="h-4 bg-slate-200 dark:bg-darkmode-400 rounded mb-2 w-full animate-pulse"></div>
-                  <div className="h-4 bg-slate-200 dark:bg-darkmode-400 rounded mb-2 w-full animate-pulse"></div>
-                  <div className="h-4 bg-slate-200 dark:bg-darkmode-400 rounded mb-4 w-2/3 animate-pulse"></div>
-                  <div className="h-8 bg-slate-200 dark:bg-darkmode-400 rounded w-full animate-pulse"></div>
-                </div>
-              </div>
-            ))
-          ) : (
-            <>
-              {CoursesController.availableCourses.map((course) => {
-                const isEnrolled = allEnrolledCourses.some(c => c.id === course.id);
-                return (
-                  <div
-                    key={course.id}
-                    className="flex flex-col col-span-12 md:col-span-6 xl:col-span-4 box box--stacked"
-                  >
-                    <div className="relative h-40 bg-slate-200 dark:bg-darkmode-600 rounded-t-[0.6rem]">
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        <Lucide
-                          icon="BookOpen"
-                          className="w-16 h-16 text-primary/30"
-                        />
-                      </div>
-                      {isEnrolled && (
-                        <div className="absolute top-3 right-3">
-                          <span className="px-2 py-1 text-xs font-medium rounded-md bg-success/20 text-success">
-                            Enrolled
-                          </span>
-                        </div>
-                      )}
-                    </div>
-                    <div className="flex flex-col p-5">
-                      <div className="text-lg font-medium text-primary">
-                        {course.title}
-                      </div>
-                      <div className="flex items-center mt-2">
-                        <Lucide
-                          icon="User"
-                          className="w-4 h-4 mr-1.5 text-slate-500"
-                        />
-                        <div className="text-slate-600">
-                          {course.instructorName}
-                        </div>
-                      </div>
-                      <div className="flex items-center mt-1">
-                        <Lucide
-                          icon="Calendar"
-                          className="w-4 h-4 mr-1.5 text-slate-500"
-                        />
-                        <div className="text-slate-600">
-                          {course.startDate?.substring(0, 10) || "N/A"}
-                        </div>
-                      </div>
-                      <div className="flex items-center mt-1 mb-4">
-                        <Lucide
-                          icon="Award"
-                          className="w-4 h-4 mr-1.5 text-slate-500"
-                        />
-                        <div className="text-slate-600">
-                          {course.credits} Credits
-                        </div>
-                      </div>
-                      {isEnrolled ? (
-                        <Button
-                          variant="primary"
-                          className="w-full mt-auto"
-                          onClick={() => handleViewCourseDetails(course)}
-                        >
-                          View Course
-                        </Button>
-                      ) : (
-                        <Button
-                          variant="outline-primary"
-                          className="w-full mt-auto"
-                          onClick={() => handleEnrollCourse(course.id)}
-                        >
-                          Enroll in Course
-                        </Button>
-                      )}
-                    </div>
-                  </div>
-                );
-              })}
-
-              {CoursesController.availableCourses.length === 0 && !isLoading && (
-                <div className="col-span-12 flex flex-col items-center justify-center p-10 box box--stacked">
+          
+          {/* Courses Table */}
+          <div className="flex flex-col box box--stacked">
+            <div className="flex flex-col p-5 sm:items-center sm:flex-row gap-y-2">
+              <div>
+                <div className="relative">
                   <Lucide
                     icon="Search"
-                    className="w-16 h-16 text-slate-300 mb-2"
+                    className="absolute inset-y-0 left-0 z-10 w-4 h-4 my-auto ml-3 stroke-[1.3] text-slate-500"
                   />
-                  <p className="text-slate-500 text-lg">No available courses found</p>
+                  <FormInput
+                    type="text"
+                    placeholder="Search courses..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="pl-9 sm:w-64 rounded-[0.5rem]"
+                  />
                 </div>
-              )}
-            </>
-          )}
-        </div>
-
-        {selectedCourse && (
-          <CourseDetailsModal
-            open={showCourseDetails}
-            onClose={() => setShowCourseDetails(false)}
-            course={selectedCourse}
-          />
-        )}
-
-        <Dialog
-          open={showEnrollConfirmation}
-          onClose={() => {
-            if (!isEnrolling && !enrollmentSuccess) {
-              setShowEnrollConfirmation(false);
-              setEnrollingCourseId(null);
-            }
-          }}
-        >
-          <Dialog.Panel>
-            {enrollmentSuccess ? (
-              <div className="p-5 text-center">
-                <Lucide
-                  icon="CheckCircle"
-                  className="w-16 h-16 mx-auto mt-3 text-success"
-                />
-                <div className="mt-5 text-2xl">Enrollment Successful!</div>
-                <div className="mt-2 text-slate-500">
-                  Your enrollment request has been submitted and is pending approval.
+              </div>
+              <div className="flex flex-col sm:flex-row gap-x-3 gap-y-2 sm:ml-auto">
+                <Menu>
+                  <Menu.Button
+                    as={Button}
+                    variant="outline-secondary"
+                    className="w-full sm:w-auto"
+                  >
+                    <Lucide
+                      icon="Filter"
+                      className="stroke-[1.3] w-4 h-4 mr-2"
+                    />
+                    Filter
+                    <Lucide
+                      icon="ChevronDown"
+                      className="stroke-[1.3] w-4 h-4 ml-2"
+                    />
+                  </Menu.Button>
+                  <Menu.Items className="w-40">
+                    <Menu.Item onClick={() => setCourses([...courses].filter(course => course.isActive))}>
+                      <Lucide icon="CheckCircle" className="w-4 h-4 mr-2" />{" "}
+                      Active Only
+                    </Menu.Item>
+                    <Menu.Item onClick={() => setCourses([...courses].filter(course => !course.isActive))}>
+                      <Lucide icon="XCircle" className="w-4 h-4 mr-2" />
+                      Inactive Only
+                    </Menu.Item>
+                    <Menu.Item onClick={() => TeacherCourseController.getTeacherCourses().then(res => {
+                      if (res.success && res.courses) setCourses(res.courses);
+                    })}>
+                      <Lucide icon="RefreshCw" className="w-4 h-4 mr-2" />
+                      Reset Filters
+                    </Menu.Item>
+                  </Menu.Items>
+                </Menu>
+              </div>
+            </div>
+            
+            {loading ? (
+              // Shimmer loading effect for table
+              <div className="overflow-auto xl:overflow-visible">
+                <div className="min-w-full">
+                  <div className="border-b border-slate-200/60 bg-slate-50 p-4">
+                    <div className="grid grid-cols-6 gap-4">
+                      <div className="h-5 bg-slate-200 rounded animate-pulse"></div>
+                      <div className="h-5 bg-slate-200 rounded animate-pulse"></div>
+                      <div className="h-5 bg-slate-200 rounded animate-pulse"></div>
+                      <div className="h-5 bg-slate-200 rounded animate-pulse"></div>
+                      <div className="h-5 bg-slate-200 rounded animate-pulse"></div>
+                      <div className="h-5 bg-slate-200 rounded animate-pulse"></div>
+                    </div>
+                  </div>
+                  {[...Array(5)].map((_, index) => (
+                    <div key={index} className="border-b border-slate-200/60 p-4">
+                      <div className="grid grid-cols-6 gap-4">
+                        <div className="h-5 bg-slate-200 rounded animate-pulse"></div>
+                        <div className="h-5 bg-slate-200 rounded animate-pulse"></div>
+                        <div className="h-5 bg-slate-200 rounded animate-pulse"></div>
+                        <div className="h-5 bg-slate-200 rounded animate-pulse"></div>
+                        <div className="h-5 bg-slate-200 rounded animate-pulse"></div>
+                        <div className="h-5 bg-slate-200 rounded animate-pulse"></div>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
             ) : (
-              <>
-                <div className="p-5 text-center">
-                  <Lucide
-                    icon="HelpCircle"
-                    className="w-16 h-16 mx-auto mt-3 text-primary"
-                  />
-                  <div className="mt-5 text-2xl">Confirm Enrollment</div>
-                  <div className="mt-2 text-slate-500">
-                    Are you sure you want to enroll in this course? This action will submit an enrollment request that requires approval.
-                  </div>
-                </div>
-                <div className="px-5 pb-8 text-center">
-                  <Button
-                    type="button"
-                    variant="outline-secondary"
-                    onClick={() => {
-                      setShowEnrollConfirmation(false);
-                      setEnrollingCourseId(null);
-                    }}
-                    className="w-24 mr-2"
-                    disabled={isEnrolling}
-                  >
-                    Cancel
-                  </Button>
-                  <Button
-                    type="button"
-                    variant="primary"
-                    onClick={submitEnrollment}
-                    className="w-24"
-                    disabled={isEnrolling}
-                  >
-                    {isEnrolling ? (
-                      <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+              <div className="overflow-auto xl:overflow-visible">
+                <Table className="border-b border-slate-200/60">
+                  <Table.Thead>
+                    <Table.Tr>
+                      <Table.Td className="py-4 font-medium border-t bg-slate-50 border-slate-200/60 text-slate-500 dark:bg-darkmode-400">
+                        <FormCheck.Input type="checkbox" />
+                      </Table.Td>
+                      <Table.Td className="py-4 font-medium border-t bg-slate-50 border-slate-200/60 text-slate-500 dark:bg-darkmode-400">
+                        Course Name
+                      </Table.Td>
+                      <Table.Td className="py-4 font-medium border-t bg-slate-50 border-slate-200/60 text-slate-500 dark:bg-darkmode-400">
+                        Enrollment
+                      </Table.Td>
+                      <Table.Td className="py-4 font-medium border-t bg-slate-50 border-slate-200/60 text-slate-500 dark:bg-darkmode-400">
+                        Start Date
+                      </Table.Td>
+                      <Table.Td className="py-4 font-medium border-t bg-slate-50 border-slate-200/60 text-slate-500 dark:bg-darkmode-400">
+                        End Date
+                      </Table.Td>
+                      <Table.Td className="py-4 font-medium text-center border-t bg-slate-50 border-slate-200/60 text-slate-500 dark:bg-darkmode-400">
+                        Status
+                      </Table.Td>
+                      <Table.Td className="w-20 py-4 font-medium text-center border-t bg-slate-50 border-slate-200/60 text-slate-500 dark:bg-darkmode-400">
+                        Action
+                      </Table.Td>
+                    </Table.Tr>
+                  </Table.Thead>
+                  <Table.Tbody>
+                    {currentCourses.length > 0 ? (
+                      currentCourses.map((course) => (
+                        <Table.Tr key={course.id} className="[&_td]:last:border-b-0">
+                          <Table.Td className="py-4 border-dashed dark:bg-darkmode-600">
+                            <FormCheck.Input type="checkbox" />
+                          </Table.Td>
+                          <Table.Td className="py-4 border-dashed dark:bg-darkmode-600">
+                            <div className="flex items-center">
+                              <div className="w-9 h-9 image-fit zoom-in rounded-full overflow-hidden bg-primary/20 flex items-center justify-center">
+                                <Lucide
+                                  icon="BookOpen"
+                                  className="w-5 h-5 text-primary"
+                                />
+                              </div>
+                              <div className="ml-3.5">
+                                <a
+                                  href="#"
+                                  className="font-medium whitespace-nowrap"
+                                  onClick={(e) => {
+                                    e.preventDefault();
+                                    handleCourseSelect(course);
+                                  }}
+                                >
+                                  {course.title}
+                                </a>
+                                <div className="text-slate-500 text-xs whitespace-nowrap mt-0.5">
+                                  {course.description.length > 50 ? course.description.substring(0, 50) + "..." : course.description}
+                                </div>
+                              </div>
+                            </div>
+                          </Table.Td>
+                          <Table.Td className="py-4 border-dashed dark:bg-darkmode-600">
+                            <div className="font-medium whitespace-nowrap">
+                              {course.enrollmentCount || 0} / {course.maxEnrollment}
+                            </div>
+                            <div className="mt-1 flex h-1 border rounded-sm bg-slate-50 dark:bg-darkmode-400">
+                              <div
+                                className={clsx([
+                                  "first:rounded-l-sm last:rounded-r-sm border border-primary/20 -m-px bg-primary/40",
+                                  course.maxEnrollment > 0 
+                                    ? `w-[${Math.min(((course.enrollmentCount || 0) / course.maxEnrollment) * 100, 100)}%]`
+                                    : "w-0"
+                                ])}
+                              ></div>
+                            </div>
+                          </Table.Td>
+                          <Table.Td className="py-4 border-dashed dark:bg-darkmode-600">
+                            <div className="font-medium whitespace-nowrap">
+                              {new Date(course.startDate).toLocaleDateString()}
+                            </div>
+                          </Table.Td>
+                          <Table.Td className="py-4 border-dashed dark:bg-darkmode-600">
+                            <div className="font-medium whitespace-nowrap">
+                              {new Date(course.endDate).toLocaleDateString()}
+                            </div>
+                          </Table.Td>
+                          <Table.Td className="py-4 text-center border-dashed dark:bg-darkmode-600">
+                            <div
+                              className={clsx([
+                                "flex items-center justify-center",
+                                course.isActive ? "text-success" : "text-danger",
+                              ])}
+                            >
+                              <Lucide
+                                icon={course.isActive ? "CheckCircle" : "XCircle"}
+                                className="w-3.5 h-3.5 stroke-[1.7]"
+                              />
+                              <div className="ml-1.5 whitespace-nowrap">
+                                {course.isActive ? "Active" : "Inactive"}
+                              </div>
+                            </div>
+                          </Table.Td>
+                          <Table.Td className="relative py-4 border-dashed dark:bg-darkmode-600">
+                            <div className="flex items-center justify-center">
+                              <Menu className="h-5">
+                                <Menu.Button className="w-5 h-5 text-slate-500">
+                                  <Lucide
+                                    icon="MoreVertical"
+                                    className="w-5 h-5 stroke-slate-400/70 fill-slate-400/70"
+                                  />
+                                </Menu.Button>
+                                <Menu.Items className="w-40">
+                                  <Menu.Item onClick={() => handleCourseSelect(course)}>
+                                    <Lucide
+                                      icon="Eye"
+                                      className="w-4 h-4 mr-2"
+                                    />{" "}
+                                    View Details
+                                  </Menu.Item>
+                                  <Menu.Item onClick={() => handleEditCourse(course)}>
+                                    <Lucide
+                                      icon="Edit"
+                                      className="w-4 h-4 mr-2"
+                                    />{" "}
+                                    Edit Course
+                                  </Menu.Item>
+                                  <Menu.Item onClick={() => handleAddLecture(course)}>
+                                    <Lucide
+                                      icon="Plus"
+                                      className="w-4 h-4 mr-2"
+                                    />{" "}
+                                    Add Lecture
+                                  </Menu.Item>
+                                  <Menu.Item onClick={() => handleManageEnrollments(course)}>
+                                    <Lucide
+                                      icon="Users"
+                                      className="w-4 h-4 mr-2"
+                                    />{" "}
+                                    Manage Enrollments
+                                  </Menu.Item>
+                                  <Menu.Item onClick={async () => {
+                                    await TeacherCourseController.updateCourse(course.id, {isActive: !course.isActive});
+                                    const updatedCourses = courses.map(c => 
+                                      c.id === course.id ? {...c, isActive: !c.isActive} : c
+                                    );
+                                    setCourses(updatedCourses);
+                                  }}>
+                                    <Lucide
+                                      icon={course.isActive ? "XCircle" : "CheckCircle"}
+                                      className="w-4 h-4 mr-2"
+                                    />
+                                    {course.isActive ? "Deactivate" : "Activate"}
+                                  </Menu.Item>
+                                </Menu.Items>
+                              </Menu>
+                            </div>
+                          </Table.Td>
+                        </Table.Tr>
+                      ))
                     ) : (
-                      "Enroll"
+                      <Table.Tr>
+                        <Table.Td colSpan={7} className="text-center py-4">
+                          <div className="flex flex-col items-center justify-center py-4">
+                            <Lucide
+                              icon="Search"
+                              className="w-16 h-16 text-slate-300"
+                            />
+                            <div className="mt-2 text-slate-500">
+                              {searchTerm ? "No courses match your search" : "No courses found"}
+                            </div>
+                            <Button
+                              variant="outline-primary"
+                              className="mt-4"
+                              onClick={handleCreateCourse}
+                            >
+                              <Lucide icon="PlusCircle" className="w-4 h-4 mr-2" />
+                              Create New Course
+                            </Button>
+                          </div>
+                        </Table.Td>
+                      </Table.Tr>
                     )}
-                  </Button>
-                </div>
-              </>
+                  </Table.Tbody>
+                </Table>
+              </div>
             )}
-          </Dialog.Panel>
-        </Dialog>
+            
+            {/* Pagination */}
+            {!loading && filteredCourses.length > 0 && (
+              <div className="flex flex-col-reverse flex-wrap items-center p-5 flex-reverse gap-y-2 sm:flex-row">
+                <Pagination className="flex-1 w-full mr-auto sm:w-auto">
+                  <Pagination.Link onClick={() => currentPage > 1 && setCurrentPage(1)}>
+                    <Lucide icon="ChevronsLeft" className="w-4 h-4" />
+                  </Pagination.Link>
+                  <Pagination.Link onClick={() => currentPage > 1 && setCurrentPage(currentPage - 1)}>
+                    <Lucide icon="ChevronLeft" className="w-4 h-4" />
+                  </Pagination.Link>
+                  {[...Array(totalPages)].map((_, index) => {
+                    const pageNumber = index + 1;
+                    if (
+                      pageNumber === 1 ||
+                      pageNumber === totalPages ||
+                      (pageNumber >= currentPage - 1 && pageNumber <= currentPage + 1)
+                    ) {
+                      return (
+                        <Pagination.Link
+                          key={pageNumber}
+                          active={currentPage === pageNumber}
+                          onClick={() => setCurrentPage(pageNumber)}
+                        >
+                          {pageNumber}
+                        </Pagination.Link>
+                      );
+                    } else if (
+                      pageNumber === currentPage - 2 ||
+                      pageNumber === currentPage + 2
+                    ) {
+                      return <Pagination.Link key={pageNumber}>...</Pagination.Link>;
+                    }
+                    return null;
+                  })}
+                  <Pagination.Link onClick={() => currentPage < totalPages && setCurrentPage(currentPage + 1)}>
+                    <Lucide icon="ChevronRight" className="w-4 h-4" />
+                  </Pagination.Link>
+                  <Pagination.Link onClick={() => currentPage < totalPages && setCurrentPage(totalPages)}>
+                    <Lucide icon="ChevronsRight" className="w-4 h-4" />
+                  </Pagination.Link>
+                </Pagination>
+                <FormSelect 
+                  className="sm:w-20 rounded-[0.5rem]"
+                  value={itemsPerPage}
+                  onChange={(e) => {
+                    setItemsPerPage(parseInt(e.target.value));
+                    setCurrentPage(1);
+                  }}
+                >
+                  <option value={5}>5</option>
+                  <option value={10}>10</option>
+                  <option value={25}>25</option>
+                  <option value={50}>50</option>
+                </FormSelect>
+              </div>
+            )}
+          </div>
+        </div>
       </div>
+
+      {/* Course Details Modal */}
+      {selectedCourse && (
+        <CourseDetailsModal
+          open={showCourseDetails}
+          onClose={() => setShowCourseDetails(false)}
+          course={selectedCourse}
+          onEdit={() => {
+            setShowCourseDetails(false);
+            handleEditCourse(selectedCourse);
+          }}
+          onAddLecture={() => {
+            setShowCourseDetails(false);
+            handleAddLecture(selectedCourse);
+          }}
+          onManageEnrollments={() => {
+            setShowCourseDetails(false);
+            handleManageEnrollments(selectedCourse);
+          }}
+        />
+      )}
+
+      {/* Course Form Modal */}
+      <CourseFormModal
+        open={showCourseForm}
+        onClose={() => setShowCourseForm(false)}
+        course={isEditMode ? selectedCourse : null}
+        isEdit={isEditMode}
+        onSuccess={(newCourse : any) => {
+          setShowCourseForm(false);
+          if (isEditMode) {
+            setCourses(
+              courses.map(c => c.id === newCourse.id ? newCourse : c)
+            );
+          } else {
+            setCourses([...courses, newCourse]);
+          }
+          // Refresh courses from API
+          TeacherCourseController.getTeacherCourses().then(res => {
+            if (res.success && res.courses) setCourses(res.courses);
+          });
+        }}
+      />
+
+      {/* Lecture Form Modal */}
+      {selectedCourse && (
+        <LectureFormModal
+          open={showLectureForm}
+          onClose={() => setShowLectureForm(false)}
+          courseId={selectedCourse.id}
+          onSuccess={() => {
+            setShowLectureForm(false);
+            // Refresh course details
+            TeacherCourseController.getCourseDetails(selectedCourse.id).then(res => {
+              if (res.success && res.course) {
+                setSelectedCourse(res.course);
+                const updatedCourses = courses.map(c => 
+                  c.id === res.course?.id ? res.course : c
+                );
+                setCourses(updatedCourses);
+              }
+            });
+          }}
+        />
+      )}
+
+      {/* Enrollment Management Modal */}
+      {selectedCourse && (
+        <EnrollmentManagementModal
+          open={showEnrollments}
+          onClose={() => setShowEnrollments(false)}
+          courseId={selectedCourse.id}
+          enrollments={enrollments}
+          onSuccess={() => {
+            // Refresh enrollments
+            TeacherCourseController.getCourseEnrollments(selectedCourse.id).then(res => {
+              if (res.success && res.enrollments) {
+                setEnrollments(res.enrollments);
+              }
+            });
+          }}
+        />
+      )}
     </div>
   );
 });
 
-export default StudentDashboard;
+export default TeacherDashboard;
