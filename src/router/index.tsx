@@ -69,6 +69,8 @@ import TeacherDashboard from "@/pages/TeacherDashboard";
 import ProfileOverviewTeacher from "@/pages/ProfileOverviewTeacher";
 import TeacherEnrollmentManagement from '@/pages/TeacherEnrollmentManagement';
 import TeacherCourseManagement from '@/pages/TeacherCourseManagement';
+
+import AdminDashboard from "@/pages/AdminDashboard/AdminDashboard";
 function Router() {
   const routes = [
     {
@@ -81,11 +83,11 @@ function Router() {
           children: [
             {
               path: "/",
-              element: <ProtectedRoute allowedRoles={[UserRole.Admin]} />,
+              element: <ProtectedRoute  />,
               children: [
                 {
-                  path: "/",
-                  element: <DashboardOverview1 />,
+                  path: "/admin-dashboard",
+                  element: <AdminDashboard />,
                 },
               ],
             },

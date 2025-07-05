@@ -13,6 +13,7 @@ class AdminUsecasesStore {
   pendingTeachers: Teacher[] = [];
   loading: boolean = false;
   error: string | null = null;
+  openCreateUserModal: boolean = false; // New flag to open create user modal from main dashboard
 
   constructor() {
     makeAutoObservable(this);
@@ -25,6 +26,7 @@ class AdminUsecasesStore {
     this.pendingTeachers = [];
     this.loading = false;
     this.error = null;
+    this.openCreateUserModal = false;
   }
 
   // Error handling

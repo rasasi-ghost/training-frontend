@@ -1,13 +1,11 @@
 import AdminUsecasesStore from "../state/AdminUsecasesStore";
-import AdminService, {
-  CreateUserRequest,
-  UpdateRoleRequest,
-  UserRole
-} from "../services/AdminService";
+import { User, Teacher, CreateUserRequest, UpdateRoleRequest } from "../services/AdminService";
 
 class AdminUsecasesController {
-  // User management
-  async getAllUsers() {
+  /**
+   * Get all users
+   */
+  async getAllUsers(): Promise<{ success: boolean; users?: User[]; error?: string }> {
     try {
       await AdminUsecasesStore.fetchAllUsers();
       return {
@@ -22,12 +20,15 @@ class AdminUsecasesController {
     }
   }
 
-  async getUserDetails(userId: string) {
+  /**
+   * Get a specific user by ID
+   */
+  async getUser(userId: string): Promise<{ success: boolean; user?: User; error?: string }> {
     try {
       await AdminUsecasesStore.fetchUser(userId);
       return {
         success: true,
-        user: AdminUsecasesStore.selectedUser
+        user: AdminUsecasesStore.selectedUser || undefined
       };
     } catch (error) {
       return {
@@ -37,7 +38,10 @@ class AdminUsecasesController {
     }
   }
 
-  async createUser(userData: CreateUserRequest) {
+  /**
+   * Create a new user
+   */
+  async createUser(userData: CreateUserRequest): Promise<{ success: boolean; userId?: string; error?: string }> {
     try {
       const userId = await AdminUsecasesStore.createUser(userData);
       return {
@@ -52,9 +56,11 @@ class AdminUsecasesController {
     }
   }
 
-  async updateUserRole(userId: string, role: UserRole) {
+  /**
+   * Update a user's role
+   */
+  async updateUserRole(userId: string, roleData: UpdateRoleRequest): Promise<{ success: boolean; error?: string }> {
     try {
-      const roleData: UpdateRoleRequest = { role };
       await AdminUsecasesStore.updateUserRole(userId, roleData);
       return {
         success: true
@@ -67,7 +73,10 @@ class AdminUsecasesController {
     }
   }
 
-  async deleteUser(userId: string) {
+  /**
+   * Delete a user
+   */
+  async deleteUser(userId: string): Promise<{ success: boolean; error?: string }> {
     try {
       await AdminUsecasesStore.deleteUser(userId);
       return {
@@ -81,8 +90,10 @@ class AdminUsecasesController {
     }
   }
 
-  // Teacher approval management
-  async getPendingTeachers() {
+  /**
+   * Get pending teacher applications
+   */
+  async getPendingTeachers(): Promise<{ success: boolean; teachers?: Teacher[]; error?: string }> {
     try {
       await AdminUsecasesStore.fetchPendingTeachers();
       return {
@@ -97,7 +108,10 @@ class AdminUsecasesController {
     }
   }
 
-  async approveTeacher(teacherId: string) {
+  /**
+   * Approve a teacher application
+   */
+  async approveTeacher(teacherId: string): Promise<{ success: boolean; error?: string }> {
     try {
       await AdminUsecasesStore.approveTeacher(teacherId);
       return {
@@ -111,7 +125,10 @@ class AdminUsecasesController {
     }
   }
 
-  async rejectTeacher(teacherId: string) {
+  /**
+   * Reject a teacher application
+   */
+  async rejectTeacher(teacherId: string): Promise<{ success: boolean; error?: string }> {
     try {
       await AdminUsecasesStore.rejectTeacher(teacherId);
       return {

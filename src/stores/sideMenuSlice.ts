@@ -16,10 +16,10 @@ export interface SideMenuState {
 }
 
 const adminMenu: Array<Menu | string> = [
-  "admin",
+  "My Dashboard",
   {
     icon: "GaugeCircle",
-    pathname: "/",
+    pathname: "/admin-dashboard",
     title: "E-Commerce",
   },
   {
