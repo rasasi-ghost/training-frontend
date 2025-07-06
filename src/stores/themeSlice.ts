@@ -76,7 +76,7 @@ export const getTheme = (search?: Themes["name"]) => {
 
 const initialState: ThemeState = {
   value:
-    localStorage.getItem("theme") === null ? themes[0].name : getTheme().name,
+    localStorage.getItem("theme") === null ? themes[4].name : getTheme().name,
 };
 
 export const themeSlice = createSlice({
@@ -93,7 +93,7 @@ export const { setTheme } = themeSlice.actions;
 
 export const selectTheme = (state: RootState) => {
   if (localStorage.getItem("theme") === null) {
-    localStorage.setItem("theme", "echo");
+    localStorage.setItem("theme", "razor");
   }
 
   return state.theme.value;
