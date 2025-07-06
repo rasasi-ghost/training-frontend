@@ -99,13 +99,13 @@ function Main() {
                               {trainingTitle}
                             </div>
                             <div className="mt-1 leading-relaxed text-slate-500 max-w-[7rem] md:max-w-[12rem] truncate">
-                              {eventType} • {faker.instructor || "Chef Michael"}
+                              {eventType} • { "Chef Michael"}
                             </div>
                             <div className="mt-1 text-slate-500">
                               <span className="event__days">
                                 {duration}
                               </span>{" "}
-                              {timeFormat} <span className="mx-1">•</span> {faker.startTime || "09:00 AM"}
+                              {timeFormat} <span className="mx-1">•</span> {"09:00 AM"}
                             </div>
                           </div>
                           <Menu className="absolute inset-y-0 right-0 w-5 h-5 my-auto mr-5 group-[.right]:-ml-8 group-[.right]:left-0">

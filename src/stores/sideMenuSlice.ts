@@ -18,18 +18,18 @@ export interface SideMenuState {
 const adminMenu: Array<Menu | string> = [
   "My Dashboard",
   {
-    icon: "GaugeCircle",
+    icon: "LayoutDashboard",
     pathname: "/admin-dashboard",
     title: "Home",
   },
   "USER MANAGEMENT",
   {
-    icon: "SquareUser",
+    icon: "Users",
     pathname: "/user-management",
     title: "Users",
   },
   {
-    icon: "CakeSlice",
+    icon: "ClipboardCheck",
     pathname: "/admin-pending-teachers",
     title: "Pending Requests",
   }
@@ -39,7 +39,7 @@ const adminMenu: Array<Menu | string> = [
 const teacherMenu: Array<Menu | string> = [
   "My Dashboard",
   {
-    icon: "Album",
+    icon: "LayoutDashboard",
     pathname: "/teacher-dashboard",
     title: "Home",
   },
@@ -50,20 +50,20 @@ const teacherMenu: Array<Menu | string> = [
     title: "Course Management",
   },
   {
-    icon: "Users",
+    icon: "UserPlus",
     pathname: "/enrollment-management",
     title: "Enrollment Management",
   },
   "APPS",
   {
-    icon: "CalendarRange",
+    icon: "Calendar",
     pathname: "/calendar",
     title: "Calendar",
   },
   
   "PERSONAL DASHBOARD",
   {
-    icon: "Presentation",
+    icon: "User",
     pathname: "/teacher-profile",
     title: "Profile Overview",
   }
@@ -73,25 +73,25 @@ const teacherMenu: Array<Menu | string> = [
 const studentMenu: Array<Menu | string> = [
   "Student Dashboard",
   {
-    icon: "Home",
+    icon: "LayoutDashboard",
     pathname: "/dashboard-overview-7",
     title: "Home",
   },
 
   {
-    icon: "Medal",
+    icon: "Award",
     pathname: "/grades-student",
     title: "Grades",
   },
   "APPS",
   {
-    icon: "CalendarRange",
+    icon: "Calendar",
     pathname: "/calendar",
     title: "Calendar",
   },
   "PERSONAL DASHBOARD",
   {
-    icon: "CalendarRange",
+    icon: "User",
     pathname: "/profile-overview-student",
     title: "Profile",
   },

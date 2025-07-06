@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Chart from "@/components/Base/Chart";
-import { colors } from "@/utils/colors";
+// import { colors } from "@/utils/colors";
 
 interface EnrollmentChartProps {
   pending: number;
@@ -33,7 +33,7 @@ const EnrollmentChart: React.FC<EnrollmentChartProps> = ({
           },
         },
         labels: ["Pending", "Approved", "Completed", "Rejected"],
-        colors: [colors.warning, colors.success, colors.primary, colors.danger],
+        // colors: [colors.warning, colors.success, colors.primary, colors.danger],
         plotOptions: {
           pie: {
             donut: {
@@ -119,7 +119,7 @@ const EnrollmentChart: React.FC<EnrollmentChartProps> = ({
         },
         fill: {
           opacity: 1,
-          colors: [colors.warning, colors.success, colors.primary, colors.danger],
+        //   colors: [colors.warning, colors.success, colors.primary, colors.danger],
         },
         tooltip: {
           y: {
@@ -128,7 +128,7 @@ const EnrollmentChart: React.FC<EnrollmentChartProps> = ({
             },
           },
         },
-        colors: [colors.warning, colors.success, colors.primary, colors.danger],
+        // colors: [colors.warning, colors.success, colors.primary, colors.danger],
       },
     });
   }, [pending, approved, completed, rejected]);
@@ -140,26 +140,26 @@ const EnrollmentChart: React.FC<EnrollmentChartProps> = ({
           <h2 className="text-base font-medium">Enrollment Status Distribution</h2>
           <div className="text-slate-500 text-sm">Breakdown of enrollment statuses</div>
         </div>
-        <Chart
+        {/* <Chart
           type="donut"
           height={300}
           options={chartData.donutOptions}
           series={chartData.donutOptions.series}
           className="mt-5"
-        />
+        /> */}
       </div>
       <div className="col-span-12 lg:col-span-6">
         <div className="flex flex-col pb-5 mb-5">
           <h2 className="text-base font-medium">Enrollment Status Comparison</h2>
           <div className="text-slate-500 text-sm">Count by enrollment status</div>
         </div>
-        <Chart
+        {/* <Chart
           type="bar"
           height={300}
           options={chartData.barOptions}
           series={chartData.barOptions.series}
           className="mt-5"
-        />
+        /> */}
       </div>
     </div>
   );

@@ -49,7 +49,7 @@ function CourseStatCard({
       <div className="flex items-center">
         <div className={`w-[54px] h-[54px] p-0.5 border border-${colorClass.split('-')[1]}/80 rounded-full bg-slate-50 cursor-pointer`}>
           <div className="w-full h-full p-1 bg-white border rounded-full border-slate-300/70">
-            <Lucide icon={icon} className={`w-full h-full ${colorClass}`} />
+            <Lucide icon={icon as any} className={`w-full h-full ${colorClass}`} />
           </div>
         </div>
         <div className="ml-4">
@@ -233,14 +233,14 @@ const TeacherDashboard: React.FC = observer(() => {
             </div>
           </div>
           <div className="px-5 pb-8 text-center">
-            <Button
+            {/* <Button
               type="button"
               variant="primary"
               onClick={() => navigate("/dashboard")}
               className="w-24"
             >
               Go to Dashboard
-            </Button>
+            </Button> */}
           </div>
         </Dialog.Panel>
       </Dialog>

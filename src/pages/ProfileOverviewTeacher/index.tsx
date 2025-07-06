@@ -52,8 +52,8 @@ const ProfileOverviewTeacher: React.FC = observer(() => {
             name: UserStore.currentUser?.displayName || "Teacher",
             email: UserStore.currentUser?.email || "teacher@example.com",
             teacherId: UserStore.currentUser?.id || "TCH12345",
-            qualification: UserStore.currentUser?.qualification || "PhD in Computer Science",
-            department: UserStore.currentUser?.department || "Computer Science",
+            qualification: "PhD",
+            department: "Marketting",
             coursesCreated: TeacherCoursesStore.courses.length
           }));
         }

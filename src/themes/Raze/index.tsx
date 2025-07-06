@@ -360,7 +360,7 @@ function Main() {
                 </a>
               </div>
               {/* BEGIN: Breadcrumb */}
-              {/* <Breadcrumb className="flex-1 hidden xl:block">
+              <Breadcrumb className="flex-1 hidden xl:block">
                 <Breadcrumb.Link
                   className="dark:before:bg-chevron-white"
                   to="/"
@@ -380,7 +380,7 @@ function Main() {
                 >
                   Analytics
                 </Breadcrumb.Link>
-              </Breadcrumb> */}
+              </Breadcrumb> 
               {/* END: Breadcrumb */}
               {/* BEGIN: Search */}
               <div

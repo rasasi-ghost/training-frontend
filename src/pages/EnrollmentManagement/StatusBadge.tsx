@@ -51,7 +51,7 @@ const StatusBadge: React.FC<StatusBadgeProps> = ({ status }) => {
 
   return (
     <div className={`flex items-center px-3 py-1.5 rounded-full ${statusInfo.bgClass} ${statusInfo.textClass} text-xs font-medium`}>
-      <Lucide icon={statusInfo.icon} className="w-3.5 h-3.5 mr-1" />
+      <Lucide icon={statusInfo.icon as any} className="w-3.5 h-3.5 mr-1" />
       {statusInfo.label}
     </div>
   );

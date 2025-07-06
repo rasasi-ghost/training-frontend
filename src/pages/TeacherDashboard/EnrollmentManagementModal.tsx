@@ -375,7 +375,7 @@ const EnrollmentManagementModal: React.FC<EnrollmentManagementModalProps> = ({
         onClose={() => setShowConfirmation(false)}
         title={confirmationMessage.title}
         message={confirmationMessage.message}
-        icon={confirmationMessage.icon}
+        icon={confirmationMessage.icon as any}
         iconColor={confirmationMessage.iconColor}
       />
     </>

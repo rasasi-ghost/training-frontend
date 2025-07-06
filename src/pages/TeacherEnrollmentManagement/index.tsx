@@ -49,7 +49,7 @@ function CourseStatCard({
       <div className="flex items-center">
         <div className={`w-[54px] h-[54px] p-0.5 border border-${colorClass.split('-')[1]}/80 rounded-full bg-slate-50 cursor-pointer`}>
           <div className="w-full h-full p-1 bg-white border rounded-full border-slate-300/70">
-            <Lucide icon={icon} className={`w-full h-full ${colorClass}`} />
+            <Lucide icon={icon as any} className={`w-full h-full ${colorClass}`} />
           </div>
         </div>
         <div className="ml-4">
@@ -70,11 +70,10 @@ function CourseStatCard({
             <div className="flex items-center">
               <div className="text-xl font-medium leading-tight">{count}</div>
               {status && (
-                <div className={`ml-2.5 px-2 py-0.5 rounded text-xs font-medium ${
-                  status === "Active" ? "bg-success/20 text-success" : 
-                  status === "Pending" ? "bg-warning/20 text-warning" : 
-                  "bg-primary/20 text-primary"
-                }`}>
+                <div className={`ml-2.5 px-2 py-0.5 rounded text-xs font-medium ${status === "Active" ? "bg-success/20 text-success" :
+                    status === "Pending" ? "bg-warning/20 text-warning" :
+                      "bg-primary/20 text-primary"
+                  }`}>
                   {status}
                 </div>
               )}
@@ -233,14 +232,14 @@ const TeacherDashboard: React.FC = observer(() => {
             </div>
           </div>
           <div className="px-5 pb-8 text-center">
-            <Button
+            {/* <Button
               type="button"
               variant="primary"
               onClick={() => navigate("/dashboard")}
               className="w-24"
             >
               Go to Dashboard
-            </Button>
+            </Button> */}
           </div>
         </Dialog.Panel>
       </Dialog>
@@ -252,14 +251,14 @@ const TeacherDashboard: React.FC = observer(() => {
       <div className="col-span-12">
         <div className="flex flex-col md:h-10 gap-y-3 md:items-center md:flex-row">
           <div className="text-base font-medium group-[.mode--light]:text-white">
-            Course Enrollment Management 
+            Course Enrollment Management
           </div>
         </div>
 
         {/* Statistics Cards */}
         <div className="flex flex-col gap-8 mt-3.5">
-          
-          
+
+
           {/* Courses Table */}
           <div className="flex flex-col box box--stacked">
 

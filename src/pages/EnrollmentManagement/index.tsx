@@ -190,7 +190,7 @@ const EnrollmentManagement: React.FC = observer(() => {
       <div className="p-5 box box--stacked">
         <div className="flex items-center">
           <div className={`w-12 h-12 flex items-center justify-center rounded-full ${color}`}>
-            <Lucide icon={icon} className="w-6 h-6 text-white" />
+            <Lucide icon={icon as any} className="w-6 h-6 text-white" />
           </div>
           <div className="ml-4">
             <div className="text-slate-500">{title}</div>

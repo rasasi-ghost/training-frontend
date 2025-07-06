@@ -80,7 +80,7 @@ function Main() {
   const yearValue = watchStudent("year");
   
   // Handle year change explicitly
-  const handleYearChange = (e) => {
+  const handleYearChange = (e:any) => {
     const value = e.target.value;
     setStudentValue("year", value, { shouldValidate: true });
   };
@@ -96,7 +96,7 @@ function Main() {
   });
 
   // Handle student registration submission
-  const onStudentSubmit = async (data) => {
+  const onStudentSubmit = async (data: any) => {
     setIsSubmitting(true);
     try {
       await UserController.registerStudent(
@@ -124,7 +124,7 @@ function Main() {
   };
 
   // Handle teacher registration submission
-  const onTeacherSubmit = async (data) => {
+  const onTeacherSubmit = async (data:any) => {
     setIsSubmitting(true);
     try {
       await UserController.registerTeacher(

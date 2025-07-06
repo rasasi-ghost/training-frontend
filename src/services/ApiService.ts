@@ -3,7 +3,7 @@ import { LocalStorageService } from "./LocalStorageService";
 
 class ApiService {
   private axiosInstance: AxiosInstance;
-  private baseURL: string = "https://localhost:7221"+"/api";
+  private baseURL: string = "https://training-api-jduv.onrender.com"+"/api";
 
   constructor() {
     this.axiosInstance = axios.create({
