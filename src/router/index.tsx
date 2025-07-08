@@ -71,6 +71,8 @@ import TeacherEnrollmentManagement from '@/pages/TeacherEnrollmentManagement';
 import TeacherCourseManagement from '@/pages/TeacherCourseManagement';
 import AdminUserManagementPage from "@/pages/AdminUserManagement";
 import AdminDashboard from "@/pages/AdminDashboard/AdminDashboard";
+import RoleBasedDashboardRedirect from "../components/RoleBasedDashboardRedirect";
+
 function Router() {
   const routes = [
     {
@@ -83,10 +85,14 @@ function Router() {
           children: [
             {
               path: "/",
-              element: <ProtectedRoute  />,
+              element: <RoleBasedDashboardRedirect />,
+            },
+            {
+              path: "/admin-dashboard",
+              element: <ProtectedRoute />,
               children: [
                 {
-                  path: "/admin-dashboard",
+                  path: "",
                   element: <AdminDashboard />,
                 },
               ],
@@ -101,10 +107,9 @@ function Router() {
                 },
               ],
             },
-            
             {
               path: "teacher-profile",
-              element: <ProtectedRoute  />,
+              element: <ProtectedRoute />,
               children: [
                 {
                   path: "",
